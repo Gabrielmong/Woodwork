@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   DataGrid,
   type GridColDef,
@@ -26,6 +27,7 @@ interface ProjectTableProps {
 }
 
 export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectTableProps) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const calculateProjectCost = (project: Project) => {
@@ -55,7 +57,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
   const columns: GridColDef[] = [
     {
       field: 'name',
-      headerName: 'Project Name',
+      headerName: t('projectTable.projectName'),
       flex: 1,
       minWidth: 180,
       renderCell: (params: GridRenderCellParams) => (
@@ -64,7 +66,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
     },
     {
       field: 'description',
-      headerName: 'Description',
+      headerName: t('projectTable.description'),
       flex: 1.5,
       minWidth: 200,
       renderCell: (params: GridRenderCellParams) => (
@@ -82,7 +84,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
     },
     {
       field: 'boards',
-      headerName: 'Boards',
+      headerName: t('projectTable.boards'),
       width: 100,
       type: 'number',
       renderCell: (params: GridRenderCellParams) => (
@@ -91,7 +93,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
     },
     {
       field: 'boardFootage',
-      headerName: 'Board Feet',
+      headerName: t('projectTable.boardFeet'),
       width: 120,
       type: 'number',
       valueGetter: (_value, row) => calculateTotalBoardFootage(row.boards),
@@ -101,7 +103,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
     },
     {
       field: 'finishes',
-      headerName: 'Finishes',
+      headerName: t('projectDetails.finishes'),
       flex: 1,
       minWidth: 150,
       sortable: false,
@@ -112,7 +114,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
               return (
                 <Chip
                   key={finish.id}
-                  label={finish?.name || 'Unknown'}
+                  label={finish?.name || t('common.unknown')}
                   size="small"
                   sx={{
                     bgcolor: 'background.default',
@@ -131,7 +133,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
     },
     {
       field: 'totalCost',
-      headerName: 'Total Cost',
+      headerName: t('projectDetails.totalCost'),
       width: 130,
       type: 'number',
       valueGetter: (_value, row) => calculateProjectCost(row),
@@ -142,19 +144,19 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
     },
     {
       field: 'isDeleted',
-      headerName: 'Status',
+      headerName: t('common.status'),
       width: 100,
       renderCell: (params: GridRenderCellParams) =>
         params.value ? (
-          <Chip label="Deleted" size="small" color="error" sx={{ height: 24 }} />
+          <Chip label={t('common.deleted')} size="small" color="error" sx={{ height: 24 }} />
         ) : (
-          <Chip label="Active" size="small" color="success" sx={{ height: 24 }} />
+          <Chip label={t('common.active')} size="small" color="success" sx={{ height: 24 }} />
         ),
     },
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'Actions',
+      headerName: t('common.actions'),
       width: 100,
       getActions: (params) => {
         const project = params.row as Project;
@@ -162,7 +164,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
           return [
             <GridActionsCellItem
               icon={<RestoreIcon />}
-              label="Restore"
+              label={t('common.restore')}
               onClick={() => onRestore(project.id)}
               showInMenu={false}
             />,
@@ -171,13 +173,13 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
-            label="Edit"
+            label={t('common.edit')}
             onClick={() => onEdit(project)}
             showInMenu={false}
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
-            label="Delete"
+            label={t('common.delete')}
             onClick={() => onDelete(project.id)}
             showInMenu={false}
           />,
@@ -234,7 +236,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
         }}
         pageSizeOptions={[5, 10, 25, 50]}
         disableRowSelectionOnClick
-        onRowClick={(params) => navigate(`/projects/${params.id}`)}
+        onRowClick={(params) => navigate(`/dashboard/projects/${params.id}`)}
         getRowHeight={() => 'auto'}
         sx={{
           '& .MuiDataGrid-cell': {

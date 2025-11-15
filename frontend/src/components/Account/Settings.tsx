@@ -11,6 +11,7 @@ import {
   CircularProgress,
 } from '@mui/material';
 import { useQuery, useMutation } from '@apollo/client';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';
 import { GET_SETTINGS, UPDATE_SETTINGS } from '../../graphql/operations';
@@ -23,6 +24,7 @@ import {
 } from '../../types/settings';
 
 export default function Settings() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settings);
 
@@ -90,7 +92,7 @@ export default function Settings() {
           fontSize: { xs: '1.75rem', md: '2.5rem', lg: '3rem' },
         }}
       >
-        Settings
+        {t('settings.title')}
       </Typography>
       <Typography
         variant="body1"
@@ -101,7 +103,7 @@ export default function Settings() {
           mb: { xs: 4, md: 6 },
         }}
       >
-        Configure your preferences and application settings
+        {t('settings.subtitle')}
       </Typography>
 
       <Stack spacing={3} sx={{ maxWidth: 600 }}>
@@ -109,18 +111,18 @@ export default function Settings() {
         <Card sx={{ borderRadius: 2 }}>
           <CardContent sx={{ p: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-              Appearance
+              {t('settings.appearance')}
             </Typography>
             <Stack spacing={3}>
               <FormControl fullWidth>
-                <InputLabel>Theme</InputLabel>
+                <InputLabel>{t('settings.theme')}</InputLabel>
                 <Select
                   value={settings.themeMode}
-                  label="Theme"
+                  label={t('settings.theme')}
                   onChange={(e) => handleThemeModeChange(e.target.value as ThemeMode)}
                 >
-                  <MenuItem value="light">Light</MenuItem>
-                  <MenuItem value="dark">Dark</MenuItem>
+                  <MenuItem value="light">{t('settings.light')}</MenuItem>
+                  <MenuItem value="dark">{t('settings.dark')}</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -131,14 +133,14 @@ export default function Settings() {
         <Card sx={{ borderRadius: 2 }}>
           <CardContent sx={{ p: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-              Localization
+              {t('settings.localization')}
             </Typography>
             <Stack spacing={3}>
               <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
+                <InputLabel>{t('settings.language')}</InputLabel>
                 <Select
                   value={settings.language}
-                  label="Language"
+                  label={t('settings.language')}
                   onChange={(e) => handleLanguageChange(e.target.value as Language)}
                 >
                   {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
@@ -150,10 +152,10 @@ export default function Settings() {
               </FormControl>
 
               <FormControl fullWidth>
-                <InputLabel>Currency</InputLabel>
+                <InputLabel>{t('settings.currency')}</InputLabel>
                 <Select
                   value={settings.currency}
-                  label="Currency"
+                  label={t('settings.currency')}
                   onChange={(e) => handleCurrencyChange(e.target.value as Currency)}
                 >
                   {Object.entries(CURRENCY_NAMES).map(([code, name]) => (
@@ -178,7 +180,7 @@ export default function Settings() {
           }}
         >
           <Typography variant="body2" color="text.secondary">
-            Settings are automatically saved and will persist across sessions.
+            {t('settings.saveMessage')}
           </Typography>
         </Box>
       </Stack>

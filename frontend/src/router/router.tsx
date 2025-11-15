@@ -5,9 +5,14 @@ import LumberTab from '../components/Lumber/LumberTab';
 import Account from '../components/Account/Account';
 import Login from '../pages/Login';
 import Register from '../pages/Register';
+import Landing from '../pages/Landing';
 import { FinishTab, PrivateRoute, ProjectDetails, ProjectTab, ToolTab } from '../components';
 
 export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Landing />,
+  },
   {
     path: '/login',
     element: <Login />,
@@ -17,7 +22,7 @@ export const router = createBrowserRouter([
     element: <Register />,
   },
   {
-    path: '/',
+    path: '/app',
     element: (
       <PrivateRoute>
         <App />

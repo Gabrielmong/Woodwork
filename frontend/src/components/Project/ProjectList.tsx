@@ -69,7 +69,7 @@ export function ProjectList({ projects, onEdit, onDelete, onRestore }: ProjectLi
         return (
           <Grid size={{ xs: 12, lg: 6 }} key={project.id}>
             <Card
-              onClick={() => navigate(`/projects/${project.id}`)}
+              onClick={() => navigate(`/dashboard/projects/${project.id}`)}
               sx={{
                 opacity: project.isDeleted ? 0.6 : 1,
                 height: '100%',

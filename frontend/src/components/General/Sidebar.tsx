@@ -23,6 +23,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { logout } from '../../store/authSlice';
 import type { RootState } from '../../store/store';
 import packageJson from '../../../package.json';
+import { resetSettings } from '../../store/settings/settingsSlice';
 
 const DRAWER_WIDTH = 280;
 const APP_VERSION = packageJson.version;
@@ -41,6 +42,7 @@ export function Sidebar({ open, onClose, variant = 'permanent' }: SidebarProps) 
   const { user } = useSelector((state: RootState) => state.auth);
 
   const handleLogout = () => {
+    dispatch(resetSettings());
     dispatch(logout());
     navigate('/login');
     if (variant === 'temporary' && onClose) {
@@ -52,27 +54,27 @@ export function Sidebar({ open, onClose, variant = 'permanent' }: SidebarProps) 
     {
       text: t('nav.dashboard'),
       icon: <DashboardIcon />,
-      path: '/',
+      path: '/app',
     },
     {
       text: t('nav.projects'),
       icon: <FolderIcon />,
-      path: '/projects',
+      path: '/app/projects',
     },
     {
       text: t('nav.lumber'),
       icon: <ViewModuleIcon />,
-      path: '/lumber',
+      path: '/app/lumber',
     },
     {
       text: t('nav.finishes'),
       icon: <FormatPaintIcon />,
-      path: '/finishes',
+      path: '/app/finishes',
     },
     {
       text: t('nav.tools'),
       icon: <BuildIcon />,
-      path: '/tools',
+      path: '/app/tools',
     },
   ];
 
@@ -80,7 +82,7 @@ export function Sidebar({ open, onClose, variant = 'permanent' }: SidebarProps) 
     {
       text: t('nav.account'),
       icon: <AccountCircleIcon />,
-      path: '/account',
+      path: '/app/account',
     },
   ];
 
@@ -241,7 +243,7 @@ export function Sidebar({ open, onClose, variant = 'permanent' }: SidebarProps) 
               <LogoutIcon />
             </ListItemIcon>
             <ListItemText
-              primary="Logout"
+              primary={t('nav.logout')}
               primaryTypographyProps={{
                 fontWeight: 500,
                 color: 'error.main',

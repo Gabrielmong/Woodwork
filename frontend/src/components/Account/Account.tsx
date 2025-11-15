@@ -22,6 +22,7 @@ import {
   InputAdornment,
   IconButton,
 } from '@mui/material';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation } from '@apollo/client';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';
@@ -41,6 +42,7 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 
 export default function Account() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const settings = useAppSelector((state) => state.settings);
   const currentUser = useAppSelector((state) => state.auth.user);
@@ -152,7 +154,7 @@ export default function Account() {
 
       if (data?.updateUser) {
         dispatch(updateUser(data.updateUser));
-        setSuccessMessage('Profile updated successfully');
+        setSuccessMessage(t('account.profileUpdatedSuccess'));
         setEditProfileOpen(false);
       }
     } catch (error: any) {
@@ -164,12 +166,12 @@ export default function Account() {
     setPasswordError('');
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setPasswordError('New passwords do not match');
+      setPasswordError(t('account.newPasswordsDoNotMatch'));
       return;
     }
 
     if (passwordForm.newPassword.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError(t('account.passwordMinLength'));
       return;
     }
 
@@ -183,7 +185,7 @@ export default function Account() {
         },
       });
 
-      setSuccessMessage('Password changed successfully');
+      setSuccessMessage(t('account.passwordChangedSuccess'));
       setChangePasswordOpen(false);
       setPasswordForm({
         currentPassword: '',
@@ -213,7 +215,7 @@ export default function Account() {
 
         if (data?.updateUser) {
           dispatch(updateUser(data.updateUser));
-          setSuccessMessage('Profile picture updated successfully');
+          setSuccessMessage(t('account.profilePictureUpdatedSuccess'));
         }
       } catch (error) {
         console.error('Error uploading image:', error);
@@ -244,7 +246,7 @@ export default function Account() {
           fontSize: { xs: '1.75rem', md: '2.5rem', lg: '3rem' },
         }}
       >
-        Account
+        {t('account.title')}
       </Typography>
       <Typography
         variant="body1"
@@ -255,7 +257,7 @@ export default function Account() {
           mb: { xs: 4, md: 6 },
         }}
       >
-        Manage your profile, preferences, and application settings
+        {t('account.subtitle')}
       </Typography>
 
       {successMessage && (
@@ -279,7 +281,7 @@ export default function Account() {
               sx={{ mb: 3 }}
             >
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Profile Information
+                {t('account.profileInformation')}
               </Typography>
               <Button
                 startIcon={<EditIcon />}
@@ -287,7 +289,7 @@ export default function Account() {
                 size="small"
                 sx={{ textTransform: 'none' }}
               >
-                Edit Profile
+                {t('common.editProfile')}
               </Button>
             </Stack>
 
@@ -338,9 +340,9 @@ export default function Account() {
                   color="text.secondary"
                   sx={{ display: 'block', mb: 0.5 }}
                 >
-                  Email
+                  {t('account.email')}
                 </Typography>
-                <Typography variant="body1">{user?.email || 'Not set'}</Typography>
+                <Typography variant="body1">{user?.email || t('common.notSet')}</Typography>
               </Box>
 
               <Box>
@@ -349,10 +351,10 @@ export default function Account() {
                   color="text.secondary"
                   sx={{ display: 'block', mb: 0.5 }}
                 >
-                  Date of Birth
+                  {t('account.dateOfBirth')}
                 </Typography>
                 <Typography variant="body1">
-                  {user?.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : 'Not set'}
+                  {user?.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : t('common.notSet')}
                 </Typography>
               </Box>
 
@@ -362,10 +364,10 @@ export default function Account() {
                   color="text.secondary"
                   sx={{ display: 'block', mb: 0.5 }}
                 >
-                  Member Since
+                  {t('account.memberSince')}
                 </Typography>
                 <Typography variant="body1">
-                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}
+                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : t('common.unknown')}
                 </Typography>
               </Box>
 
@@ -374,7 +376,7 @@ export default function Account() {
                 onClick={() => setChangePasswordOpen(true)}
                 sx={{ textTransform: 'none', alignSelf: 'flex-start' }}
               >
-                Change Password
+                {t('common.changePassword')}
               </Button>
             </Stack>
           </CardContent>
@@ -384,18 +386,18 @@ export default function Account() {
         <Card sx={{ borderRadius: 2 }}>
           <CardContent sx={{ p: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-              Appearance
+              {t('settings.appearance')}
             </Typography>
             <Stack spacing={3}>
               <FormControl fullWidth>
-                <InputLabel>Theme</InputLabel>
+                <InputLabel>{t('settings.theme')}</InputLabel>
                 <Select
                   value={settings.themeMode}
-                  label="Theme"
+                  label={t('settings.theme')}
                   onChange={(e) => handleThemeModeChange(e.target.value as ThemeMode)}
                 >
-                  <MenuItem value="light">Light</MenuItem>
-                  <MenuItem value="dark">Dark</MenuItem>
+                  <MenuItem value="light">{t('settings.light')}</MenuItem>
+                  <MenuItem value="dark">{t('settings.dark')}</MenuItem>
                 </Select>
               </FormControl>
             </Stack>
@@ -406,14 +408,14 @@ export default function Account() {
         <Card sx={{ borderRadius: 2 }}>
           <CardContent sx={{ p: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 3 }}>
-              Localization
+              {t('settings.localization')}
             </Typography>
             <Stack spacing={3}>
               <FormControl fullWidth>
-                <InputLabel>Language</InputLabel>
+                <InputLabel>{t('settings.language')}</InputLabel>
                 <Select
                   value={settings.language}
-                  label="Language"
+                  label={t('settings.language')}
                   onChange={(e) => handleLanguageChange(e.target.value as Language)}
                 >
                   {Object.entries(LANGUAGE_NAMES).map(([code, name]) => (
@@ -425,10 +427,10 @@ export default function Account() {
               </FormControl>
 
               <FormControl fullWidth>
-                <InputLabel>Currency</InputLabel>
+                <InputLabel>{t('settings.currency')}</InputLabel>
                 <Select
                   value={settings.currency}
-                  label="Currency"
+                  label={t('settings.currency')}
                   onChange={(e) => handleCurrencyChange(e.target.value as Currency)}
                 >
                   {Object.entries(CURRENCY_NAMES).map(([code, name]) => (
@@ -453,7 +455,7 @@ export default function Account() {
           }}
         >
           <Typography variant="body2" color="text.secondary">
-            All changes are automatically saved and will persist across sessions.
+            {t('account.allChangesAutoSaved')}
           </Typography>
         </Box>
       </Stack>
@@ -465,30 +467,30 @@ export default function Account() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Edit Profile</DialogTitle>
+        <DialogTitle>{t('common.editProfile')}</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
-              label="First Name"
+              label={t('account.firstName')}
               fullWidth
               value={profileForm.firstName}
               onChange={(e) => setProfileForm({ ...profileForm, firstName: e.target.value })}
             />
             <TextField
-              label="Last Name"
+              label={t('account.lastName')}
               fullWidth
               value={profileForm.lastName}
               onChange={(e) => setProfileForm({ ...profileForm, lastName: e.target.value })}
             />
             <TextField
-              label="Email"
+              label={t('account.email')}
               type="email"
               fullWidth
               value={profileForm.email}
               onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })}
             />
             <TextField
-              label="Date of Birth"
+              label={t('account.dateOfBirth')}
               type="date"
               fullWidth
               InputLabelProps={{ shrink: true }}
@@ -498,9 +500,9 @@ export default function Account() {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setEditProfileOpen(false)}>Cancel</Button>
+          <Button onClick={() => setEditProfileOpen(false)}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleProfileUpdate}>
-            Save Changes
+            {t('common.saveChanges')}
           </Button>
         </DialogActions>
       </Dialog>
@@ -512,7 +514,7 @@ export default function Account() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Change Password</DialogTitle>
+        <DialogTitle>{t('common.changePassword')}</DialogTitle>
         <DialogContent>
           {passwordError && (
             <Alert severity="error" sx={{ mb: 2 }}>
@@ -521,7 +523,7 @@ export default function Account() {
           )}
           <Stack spacing={2} sx={{ mt: 1 }}>
             <TextField
-              label="Current Password"
+              label={t('account.currentPassword')}
               type={showPasswords.current ? 'text' : 'password'}
               fullWidth
               value={passwordForm.currentPassword}
@@ -544,7 +546,7 @@ export default function Account() {
               }}
             />
             <TextField
-              label="New Password"
+              label={t('account.newPassword')}
               type={showPasswords.new ? 'text' : 'password'}
               fullWidth
               value={passwordForm.newPassword}
@@ -565,7 +567,7 @@ export default function Account() {
               }}
             />
             <TextField
-              label="Confirm New Password"
+              label={t('account.confirmNewPassword')}
               type={showPasswords.confirm ? 'text' : 'password'}
               fullWidth
               value={passwordForm.confirmPassword}
@@ -590,9 +592,9 @@ export default function Account() {
           </Stack>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setChangePasswordOpen(false)}>Cancel</Button>
+          <Button onClick={() => setChangePasswordOpen(false)}>{t('common.cancel')}</Button>
           <Button variant="contained" onClick={handleChangePassword}>
-            Change Password
+            {t('common.changePassword')}
           </Button>
         </DialogActions>
       </Dialog>

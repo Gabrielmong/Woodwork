@@ -36,7 +36,8 @@
     "lumber": "Inventario de Madera",
     "finishes": "Acabados de Madera",
     "tools": "Herramientas",
-    "account": "Cuenta"
+    "account": "Cuenta",
+    "logout": "Cerrar Sesión"
   },
   "dashboard": {
     "title": "Panel de Control",
@@ -139,6 +140,146 @@
     "create": "Crear",
     "update": "Actualizar",
     "showDeleted": "Mostrar Eliminados",
-    "hideDeleted": "Ocultar Eliminados"
+    "hideDeleted": "Ocultar Eliminados",
+    "actions": "Acciones",
+    "status": "Estado",
+    "active": "Activo",
+    "deleted": "Eliminado",
+    "name": "Nombre",
+    "description": "Descripción",
+    "price": "Precio",
+    "unknown": "Desconocido",
+    "notSet": "No establecido",
+    "notes": "Notas",
+    "saveChanges": "Guardar Cambios",
+    "editProfile": "Editar Perfil",
+    "changePassword": "Cambiar Contraseña"
+  },
+  "account": {
+    "title": "Cuenta",
+    "subtitle": "Administre su perfil, preferencias y configuración de la aplicación",
+    "profileInformation": "Información del Perfil",
+    "email": "Correo Electrónico",
+    "dateOfBirth": "Fecha de Nacimiento",
+    "memberSince": "Miembro Desde",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmNewPassword": "Confirmar Nueva Contraseña",
+    "passwordChangedSuccess": "Contraseña cambiada exitosamente",
+    "profileUpdatedSuccess": "Perfil actualizado exitosamente",
+    "profilePictureUpdatedSuccess": "Foto de perfil actualizada exitosamente",
+    "newPasswordsDoNotMatch": "Las nuevas contraseñas no coinciden",
+    "passwordMinLength": "La contraseña debe tener al menos 6 caracteres",
+    "allChangesAutoSaved": "Todos los cambios se guardan automáticamente y persistirán entre sesiones."
+  },
+  "projectDetails": {
+    "backToProjects": "Volver a Proyectos",
+    "projectSummary": "Resumen del Proyecto",
+    "totalBoardFeet": "Total de Pies Tabla",
+    "boardTypes": "Tipos de Tabla",
+    "totalCost": "Costo Total",
+    "materials": "Materiales",
+    "bfTotal": "BF total",
+    "unknownWood": "Madera Desconocida",
+    "quantity": "Cantidad",
+    "boards": "tablas",
+    "boardFeet": "Pies Tabla",
+    "costPerBF": "Costo por BF",
+    "jankaRating": "Clasificación Janka",
+    "materialCost": "Costo de Material",
+    "goodFor": "Bueno para:",
+    "finishes": "Acabados",
+    "costBreakdown": "Desglose de Costos",
+    "labor": "Mano de Obra",
+    "miscellaneous": "Varios",
+    "deleteProject": "Eliminar Proyecto",
+    "deleteProjectConfirm": "¿Está seguro de que desea eliminar \"{name}\"? Esta acción no se puede deshacer.",
+    "error": "Error:",
+    "projectNotFound": "Proyecto no encontrado"
+  },
+  "projectTable": {
+    "projectName": "Nombre del Proyecto",
+    "description": "Descripción",
+    "boards": "Tablas",
+    "boardFeet": "Pies Tabla"
+  },
+  "boardInput": {
+    "board": "Tabla",
+    "woodSpecies": "Especie de Madera",
+    "widthInches": "Ancho (pulgadas)",
+    "thicknessInches": "Grosor (pulgadas)",
+    "lengthVaras": "Longitud (varas)",
+    "varaHelper": "1 vara = 33 pulgadas",
+    "quantity": "Cantidad",
+    "boardFeetTotal": "Pies Tabla (total):",
+    "materialCost": "Costo de Material:"
+  },
+  "lumberTable": {
+    "name": "Nombre",
+    "description": "Descripción",
+    "jankaRating": "Clasificación Janka",
+    "costPerBF": "Costo/BF",
+    "tags": "Etiquetas"
+  },
+  "finishTable": {
+    "name": "Nombre",
+    "description": "Descripción",
+    "price": "Precio"
+  },
+  "toolTable": {
+    "name": "Nombre",
+    "description": "Descripción",
+    "function": "Función",
+    "serialNumber": "Número de Serie",
+    "price": "Precio"
+  },
+  "landing": {
+    "signIn": "Iniciar Sesión",
+    "signUp": "Registrarse",
+    "backToHome": "Volver al Inicio",
+    "hero": {
+      "title": "Tu Gestor Completo de Proyectos de Carpintería",
+      "subtitle": "Planifica, estima y rastrea tus proyectos de carpintería con precisión. Administra inventario de madera, calcula costos y organiza tus herramientas de taller—todo en un solo lugar.",
+      "getStarted": "Comenzar Gratis",
+      "learnMore": "Saber Más"
+    },
+    "features": {
+      "title": "Todo lo que Necesitas para Carpintería",
+      "subtitle": "Herramientas profesionales para ayudarte a planificar, rastrear y gestionar todos los aspectos de tus proyectos de carpintería.",
+      "projects": {
+        "title": "Gestión de Proyectos",
+        "description": "Planifica y estima proyectos con cálculos detallados de materiales, desgloses de costos y seguimiento de pies tabla."
+      },
+      "lumber": {
+        "title": "Inventario de Madera",
+        "description": "Rastrea tipos de madera, precios, clasificaciones de dureza (Janka) y usos recomendados para cada especie."
+      },
+      "finishes": {
+        "title": "Catálogo de Acabados",
+        "description": "Organiza tus productos de acabado de madera con precios, descripciones y recomendaciones de aplicación."
+      },
+      "tools": {
+        "title": "Seguimiento de Herramientas",
+        "description": "Cataloga tus herramientas de taller con números de serie, fechas de compra y costos de equipo."
+      },
+      "calculations": {
+        "title": "Cálculos Automáticos",
+        "description": "Calcula pies tabla, costos de materiales y totales de proyectos automáticamente con medidas precisas."
+      },
+      "tracking": {
+        "title": "Seguimiento de Inversión",
+        "description": "Monitorea tu inversión total en materiales, herramientas y proyectos con análisis detallados."
+      }
+    },
+    "cta": {
+      "title": "¿Listo para Comenzar?",
+      "subtitle": "Únete a los carpinteros que usan Woodwork para gestionar sus proyectos profesionalmente.",
+      "button": "Crear Cuenta Gratis"
+    },
+    "footer": {
+      "rights": "Todos los derechos reservados."
+    }
   }
 }

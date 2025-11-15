@@ -36,7 +36,8 @@
     "lumber": "Lumber",
     "finishes": "Finishes",
     "tools": "Tools",
-    "account": "Account"
+    "account": "Account",
+    "logout": "Logout"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -139,6 +140,146 @@
     "create": "Create",
     "update": "Update",
     "showDeleted": "Show Deleted",
-    "hideDeleted": "Hide Deleted"
+    "hideDeleted": "Hide Deleted",
+    "actions": "Actions",
+    "status": "Status",
+    "active": "Active",
+    "deleted": "Deleted",
+    "name": "Name",
+    "description": "Description",
+    "price": "Price",
+    "unknown": "Unknown",
+    "notSet": "Not set",
+    "notes": "Notes",
+    "saveChanges": "Save Changes",
+    "editProfile": "Edit Profile",
+    "changePassword": "Change Password"
+  },
+  "account": {
+    "title": "Account",
+    "subtitle": "Manage your profile, preferences, and application settings",
+    "profileInformation": "Profile Information",
+    "email": "Email",
+    "dateOfBirth": "Date of Birth",
+    "memberSince": "Member Since",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "passwordChangedSuccess": "Password changed successfully",
+    "profileUpdatedSuccess": "Profile updated successfully",
+    "profilePictureUpdatedSuccess": "Profile picture updated successfully",
+    "newPasswordsDoNotMatch": "New passwords do not match",
+    "passwordMinLength": "Password must be at least 6 characters",
+    "allChangesAutoSaved": "All changes are automatically saved and will persist across sessions."
+  },
+  "projectDetails": {
+    "backToProjects": "Back to Projects",
+    "projectSummary": "Project Summary",
+    "totalBoardFeet": "Total Board Feet",
+    "boardTypes": "Board Types",
+    "totalCost": "Total Cost",
+    "materials": "Materials",
+    "bfTotal": "BF total",
+    "unknownWood": "Unknown Wood",
+    "quantity": "Quantity",
+    "boards": "boards",
+    "boardFeet": "Board Feet",
+    "costPerBF": "Cost per BF",
+    "jankaRating": "Janka Rating",
+    "materialCost": "Material Cost",
+    "goodFor": "Good for:",
+    "finishes": "Finishes",
+    "costBreakdown": "Cost Breakdown",
+    "labor": "Labor",
+    "miscellaneous": "Miscellaneous",
+    "deleteProject": "Delete Project",
+    "deleteProjectConfirm": "Are you sure you want to delete \"{name}\"? This action cannot be undone.",
+    "error": "Error:",
+    "projectNotFound": "Project not found"
+  },
+  "projectTable": {
+    "projectName": "Project Name",
+    "description": "Description",
+    "boards": "Boards",
+    "boardFeet": "Board Feet"
+  },
+  "boardInput": {
+    "board": "Board",
+    "woodSpecies": "Wood Species",
+    "widthInches": "Width (inches)",
+    "thicknessInches": "Thickness (inches)",
+    "lengthVaras": "Length (varas)",
+    "varaHelper": "1 vara = 33 inches",
+    "quantity": "Quantity",
+    "boardFeetTotal": "Board Feet (total):",
+    "materialCost": "Material Cost:"
+  },
+  "lumberTable": {
+    "name": "Name",
+    "description": "Description",
+    "jankaRating": "Janka Rating",
+    "costPerBF": "Cost/BF",
+    "tags": "Tags"
+  },
+  "finishTable": {
+    "name": "Name",
+    "description": "Description",
+    "price": "Price"
+  },
+  "toolTable": {
+    "name": "Name",
+    "description": "Description",
+    "function": "Function",
+    "serialNumber": "Serial Number",
+    "price": "Price"
+  },
+  "landing": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "backToHome": "Back to Home",
+    "hero": {
+      "title": "Your Complete Woodworking Project Manager",
+      "subtitle": "Plan, estimate, and track your woodworking projects with precision. Manage lumber inventory, calculate costs, and organize your workshop tools—all in one place.",
+      "getStarted": "Get Started Free",
+      "learnMore": "Learn More"
+    },
+    "features": {
+      "title": "Everything You Need for Woodworking",
+      "subtitle": "Professional tools to help you plan, track, and manage all aspects of your woodworking projects.",
+      "projects": {
+        "title": "Project Management",
+        "description": "Plan and estimate projects with detailed material calculations, cost breakdowns, and board footage tracking."
+      },
+      "lumber": {
+        "title": "Lumber Inventory",
+        "description": "Track lumber types, pricing, hardness ratings (Janka), and recommended uses for each wood species."
+      },
+      "finishes": {
+        "title": "Finish Catalog",
+        "description": "Organize your wood finish products with pricing, descriptions, and application recommendations."
+      },
+      "tools": {
+        "title": "Tool Tracking",
+        "description": "Catalog your workshop tools with serial numbers, purchase dates, and equipment costs."
+      },
+      "calculations": {
+        "title": "Automatic Calculations",
+        "description": "Calculate board footage, material costs, and project totals automatically with precise measurements."
+      },
+      "tracking": {
+        "title": "Investment Tracking",
+        "description": "Monitor your total investment in materials, tools, and projects with detailed analytics."
+      }
+    },
+    "cta": {
+      "title": "Ready to Get Started?",
+      "subtitle": "Join woodworkers who use Woodwork to manage their projects professionally.",
+      "button": "Create Free Account"
+    },
+    "footer": {
+      "rights": "All rights reserved."
+    }
   }
 }

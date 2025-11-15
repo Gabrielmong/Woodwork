@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   TextField,
@@ -31,6 +32,7 @@ export default function BoardInput({
   onChange,
   onRemove,
 }: BoardInputProps) {
+  const { t } = useTranslation();
   const handleFieldChange = (field: keyof CreateBoardInput, value: string | number) => {
     onChange(index, { ...board, [field]: value });
   };
@@ -61,7 +63,7 @@ export default function BoardInput({
         {/* Header */}
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
-            Board #{index + 1}
+            {t('boardInput.board')} #{index + 1}
           </Typography>
           <IconButton
             onClick={() => onRemove(index)}
@@ -81,10 +83,10 @@ export default function BoardInput({
 
         {/* Lumber Selection */}
         <FormControl fullWidth required>
-          <InputLabel>Wood Species</InputLabel>
+          <InputLabel>{t('boardInput.woodSpecies')}</InputLabel>
           <Select
             value={board.lumberId || ''}
-            label="Wood Species"
+            label={t('boardInput.woodSpecies')}
             onChange={(e) => handleBoardLumberChange(e.target.value)}
           >
             {lumberOptions.map((lumber) => (
@@ -98,7 +100,7 @@ export default function BoardInput({
         {/* Dimensions */}
         <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
           <TextField
-            label="Width (inches)"
+            label={t('boardInput.widthInches')}
             type="number"
             value={board.width || ''}
             onChange={(e) => handleFieldChange('width', parseFloat(e.target.value) || 0)}
@@ -107,7 +109,7 @@ export default function BoardInput({
             required
           />
           <TextField
-            label="Thickness (inches)"
+            label={t('boardInput.thicknessInches')}
             type="number"
             value={board.thickness || ''}
             onChange={(e) => handleFieldChange('thickness', parseFloat(e.target.value) || 0)}
@@ -116,20 +118,20 @@ export default function BoardInput({
             required
           />
           <TextField
-            label="Length (varas)"
+            label={t('boardInput.lengthVaras')}
             type="number"
             value={board.length || ''}
             onChange={(e) => handleFieldChange('length', parseFloat(e.target.value) || 0)}
             inputProps={{ step: '0.25', min: '0' }}
             fullWidth
             required
-            helperText="1 vara = 33 inches"
+            helperText={t('boardInput.varaHelper')}
           />
         </Stack>
 
         {/* Quantity */}
         <TextField
-          label="Quantity"
+          label={t('boardInput.quantity')}
           type="number"
           value={board.quantity || ''}
           onChange={(e) => handleFieldChange('quantity', parseInt(e.target.value) || 0)}
@@ -152,7 +154,7 @@ export default function BoardInput({
             <Stack spacing={1}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Board Feet (total):
+                  {t('boardInput.boardFeetTotal')}
                 </Typography>
                 <Typography variant="body2" fontWeight={600} color="primary.main">
                   {boardFootage.toFixed(2)} BF
@@ -160,7 +162,7 @@ export default function BoardInput({
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2" color="text.secondary">
-                  Material Cost:
+                  {t('boardInput.materialCost')}
                 </Typography>
                 <Typography variant="body2" fontWeight={600} color="success.main">
                   ₡{materialCost.toFixed(2)}

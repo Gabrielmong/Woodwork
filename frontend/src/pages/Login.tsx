@@ -13,8 +13,10 @@ import {
   Alert,
   InputAdornment,
   IconButton,
+  AppBar,
+  Toolbar,
 } from '@mui/material';
-import { Visibility, VisibilityOff, Login as LoginIcon } from '@mui/icons-material';
+import { Visibility, VisibilityOff, Login as LoginIcon, Home as HomeIcon } from '@mui/icons-material';
 import { LOGIN } from '../graphql/auth';
 import { setCredentials } from '../store/authSlice';
 import { t } from 'i18next';
@@ -30,7 +32,7 @@ export default function Login() {
   const [login, { loading }] = useMutation(LOGIN, {
     onCompleted: (data) => {
       dispatch(setCredentials(data.login));
-      navigate('/');
+      navigate('/app');
     },
     onError: (error) => {
       setError(error.message || t('login.failed'));
@@ -54,16 +56,57 @@ export default function Login() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
+      {/* Top Navigation Bar */}
+      <AppBar
+        position="sticky"
+        elevation={0}
         sx={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+          bgcolor: 'background.paper',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
         }}
       >
+        <Toolbar sx={{ py: 1 }}>
+          <Typography
+            variant="h5"
+            component="div"
+            sx={{
+              flexGrow: 1,
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #635BFF 0%, #4F46E5 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            {t('app.title')}
+          </Typography>
+          <Button
+            startIcon={<HomeIcon />}
+            onClick={() => navigate('/')}
+            sx={{
+              textTransform: 'none',
+              borderRadius: 2,
+            }}
+          >
+            {t('landing.backToHome')}
+          </Button>
+        </Toolbar>
+      </AppBar>
+
+      {/* Login Form */}
+      <Container component="main" maxWidth="xs">
+        <Box
+          sx={{
+            minHeight: 'calc(100vh - 80px)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            py: 4,
+          }}
+        >
         <Paper elevation={3} sx={{ p: 4, width: '100%' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <LoginIcon sx={{ fontSize: 48, mb: 2, color: 'primary.main' }} />
@@ -142,5 +185,6 @@ export default function Login() {
         </Paper>
       </Box>
     </Container>
+    </Box>
   );
 }

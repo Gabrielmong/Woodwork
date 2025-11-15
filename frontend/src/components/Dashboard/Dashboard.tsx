@@ -20,17 +20,32 @@ import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import InventoryIcon from '@mui/icons-material/Inventory';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { GET_DASHBOARD_STATS } from '../../graphql/operations';
+import { GET_DASHBOARD_STATS, GET_SETTINGS } from '../../graphql/operations';
 import { useCurrency } from '../../utils/currency';
+import { useDispatch } from 'react-redux';
+import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';
+import type { Currency, Language, ThemeMode } from '../../types';
 
 export default function Dashboard() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const formatCurrency = useCurrency();
+  const dispatch = useDispatch();
 
   const { data, loading, error } = useQuery(GET_DASHBOARD_STATS);
 
-  if (loading) {
+  const { loading: settingsLoading } = useQuery(GET_SETTINGS, {
+    onCompleted: (data) => {
+      // Sync backend settings to Redux
+      if (data.settings) {
+        dispatch(setCurrency(data.settings.currency as Currency));
+        dispatch(setLanguage(data.settings.language as Language));
+        dispatch(setThemeMode(data.settings.themeMode as ThemeMode));
+      }
+    },
+  });
+
+  if (loading || settingsLoading) {
     return (
       <Box
         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}
@@ -65,28 +80,28 @@ export default function Dashboard() {
       value: stats.totalProjects,
       icon: <FolderIcon sx={{ fontSize: 40 }} />,
       color: '#635BFF',
-      action: () => navigate('/projects'),
+      action: () => navigate('/dashboard/projects'),
     },
     {
       title: t('dashboard.lumberTypes'),
       value: stats.totalLumber,
       icon: <ViewModuleIcon sx={{ fontSize: 40 }} />,
       color: '#34D399',
-      action: () => navigate('/lumber'),
+      action: () => navigate('/dashboard/lumber'),
     },
     {
       title: t('dashboard.finishOptions'),
       value: stats.totalFinishes,
       icon: <FormatPaintIcon sx={{ fontSize: 40 }} />,
       color: '#F59E0B',
-      action: () => navigate('/finishes'),
+      action: () => navigate('/dashboard/finishes'),
     },
     {
       title: t('dashboard.toolInventory'),
       value: stats.totalTools,
       icon: <BuildIcon sx={{ fontSize: 40 }} />,
       color: '#EF4444',
-      action: () => navigate('/tools'),
+      action: () => navigate('/dashboard/tools'),
     },
   ];
 

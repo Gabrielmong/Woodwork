@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   DataGrid,
   type GridColDef,
@@ -18,10 +19,12 @@ interface LumberTableProps {
 }
 
 export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: LumberTableProps) {
+  const { t } = useTranslation();
+
   const columns: GridColDef[] = [
     {
       field: 'name',
-      headerName: 'Name',
+      headerName: t('lumberTable.name'),
       flex: 1,
       minWidth: 150,
       renderCell: (params: GridRenderCellParams) => (
@@ -30,7 +33,7 @@ export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: Lum
     },
     {
       field: 'description',
-      headerName: 'Description',
+      headerName: t('lumberTable.description'),
       flex: 2,
       minWidth: 200,
       renderCell: (params: GridRenderCellParams) => (
@@ -48,7 +51,7 @@ export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: Lum
     },
     {
       field: 'jankaRating',
-      headerName: 'Janka Rating',
+      headerName: t('lumberTable.jankaRating'),
       width: 130,
       type: 'number',
       renderCell: (params: GridRenderCellParams) => (
@@ -59,7 +62,7 @@ export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: Lum
     },
     {
       field: 'costPerBoardFoot',
-      headerName: 'Cost/BF',
+      headerName: t('lumberTable.costPerBF'),
       width: 110,
       type: 'number',
       renderCell: (params: GridRenderCellParams) => (
@@ -68,7 +71,7 @@ export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: Lum
     },
     {
       field: 'tags',
-      headerName: 'Tags',
+      headerName: t('lumberTable.tags'),
       flex: 1.5,
       minWidth: 200,
       sortable: false,
@@ -96,19 +99,19 @@ export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: Lum
     },
     {
       field: 'isDeleted',
-      headerName: 'Status',
+      headerName: t('common.status'),
       width: 100,
       renderCell: (params: GridRenderCellParams) =>
         params.value ? (
-          <Chip label="Deleted" size="small" color="error" sx={{ height: 24 }} />
+          <Chip label={t('common.deleted')} size="small" color="error" sx={{ height: 24 }} />
         ) : (
-          <Chip label="Active" size="small" color="success" sx={{ height: 24 }} />
+          <Chip label={t('common.active')} size="small" color="success" sx={{ height: 24 }} />
         ),
     },
     {
       field: 'actions',
       type: 'actions',
-      headerName: 'Actions',
+      headerName: t('common.actions'),
       width: 100,
       getActions: (params) => {
         const lumber = params.row as Lumber;
@@ -116,7 +119,7 @@ export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: Lum
           return [
             <GridActionsCellItem
               icon={<RestoreIcon />}
-              label="Restore"
+              label={t('common.restore')}
               onClick={() => onRestore(lumber.id)}
               showInMenu={false}
             />,
@@ -125,13 +128,13 @@ export default function LumberTable({ lumber, onEdit, onDelete, onRestore }: Lum
         return [
           <GridActionsCellItem
             icon={<EditIcon />}
-            label="Edit"
+            label={t('common.edit')}
             onClick={() => onEdit(lumber)}
             showInMenu={false}
           />,
           <GridActionsCellItem
             icon={<DeleteIcon />}
-            label="Delete"
+            label={t('common.delete')}
             onClick={() => onDelete(lumber.id)}
             showInMenu={false}
           />,

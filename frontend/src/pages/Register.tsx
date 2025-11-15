@@ -41,7 +41,7 @@ export default function Register() {
   const [register, { loading }] = useMutation(REGISTER, {
     onCompleted: (data) => {
       dispatch(setCredentials(data.register));
-      navigate('/');
+      navigate('/app');
     },
     onError: (error) => {
       setError(error.message || t('register.failed'));

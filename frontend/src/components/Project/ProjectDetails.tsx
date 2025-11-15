@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation } from '@apollo/client';
 import {
   Box,
@@ -36,6 +37,7 @@ import { ConfirmDialog } from '../General';
 import { ProjectForm } from './ProjectForm';
 
 export function ProjectDetails() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const navigate = useNavigate();
@@ -55,7 +57,7 @@ export function ProjectDetails() {
 
   const [deleteProject] = useMutation(DELETE_PROJECT, {
     onCompleted: () => {
-      navigate('/projects');
+      navigate('/dashboard/projects');
     },
   });
 
@@ -87,11 +89,11 @@ export function ProjectDetails() {
   if (projectError || !projectData?.project) {
     return (
       <Box>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/projects')} sx={{ mb: 3 }}>
-          Back to Projects
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/dashboard/projects')} sx={{ mb: 3 }}>
+          {t('projectDetails.backToProjects')}
         </Button>
         <Typography variant="h4" color="text.secondary">
-          {projectError ? `Error: ${projectError.message}` : 'Project not found'}
+          {projectError ? `${t('projectDetails.error')} ${projectError.message}` : t('projectDetails.projectNotFound')}
         </Typography>
       </Box>
     );
@@ -176,8 +178,8 @@ export function ProjectDetails() {
     <Box>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/projects')} sx={{ mb: 3 }}>
-          Back to Projects
+        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/dashboard/projects')} sx={{ mb: 3 }}>
+          {t('projectDetails.backToProjects')}
         </Button>
 
         <Stack
@@ -243,7 +245,7 @@ export function ProjectDetails() {
       <Card sx={{ mb: 3, borderRadius: 2 }}>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Project Summary
+            {t('projectDetails.projectSummary')}
           </Typography>
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
@@ -252,7 +254,7 @@ export function ProjectDetails() {
           >
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Total Board Feet
+                {t('projectDetails.totalBoardFeet')}
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
                 {totalBoardFootage.toFixed(2)} BF
@@ -260,7 +262,7 @@ export function ProjectDetails() {
             </Box>
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Board Types
+                {t('projectDetails.boardTypes')}
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
                 {project.boards.length}
@@ -268,7 +270,7 @@ export function ProjectDetails() {
             </Box>
             <Box sx={{ flex: 1 }}>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
-                Total Cost
+                {t('projectDetails.totalCost')}
               </Typography>
               <Typography variant="h5" sx={{ fontWeight: 700, color: 'success.main' }}>
                 {formatCurrency(totalCost)}
@@ -282,7 +284,7 @@ export function ProjectDetails() {
       <Card sx={{ mb: 3, borderRadius: 2 }}>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Materials ({totalBoardFootage.toFixed(2)} BF total)
+            {t('projectDetails.materials')} ({totalBoardFootage.toFixed(2)} {t('projectDetails.bfTotal')})
           </Typography>
           <Stack spacing={2}>
             {project.boards.map((board: any, idx: number) => {
@@ -316,19 +318,19 @@ export function ProjectDetails() {
                           variant="h6"
                           sx={{ fontWeight: 700, color: 'text.primary', mb: 0.5 }}
                         >
-                          {lumber?.name || 'Unknown Wood'}
+                          {lumber?.name || t('projectDetails.unknownWood')}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
                           {board.width}" × {board.thickness}" × {board.length} varas (
                           {(lengthInInches / 12).toFixed(2)}')
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          Quantity: {board.quantity} boards
+                          {t('projectDetails.quantity')}: {board.quantity} {t('projectDetails.boards')}
                         </Typography>
                       </Box>
                       <Box sx={{ textAlign: 'right' }}>
                         <Typography variant="body2" color="text.secondary">
-                          Board Feet
+                          {t('projectDetails.boardFeet')}
                         </Typography>
                         <Typography variant="h6" sx={{ fontWeight: 700, color: 'primary.main' }}>
                           {totalBF.toFixed(2)} BF
@@ -342,7 +344,7 @@ export function ProjectDetails() {
                       <Stack direction="row" spacing={2} sx={{ mb: 1.5 }}>
                         <Box sx={{ flex: 1 }}>
                           <Typography variant="caption" color="text.secondary">
-                            Cost per BF
+                            {t('projectDetails.costPerBF')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
                             {lumber ? formatCurrency(lumber.costPerBoardFoot) : 'N/A'}
@@ -350,7 +352,7 @@ export function ProjectDetails() {
                         </Box>
                         <Box sx={{ flex: 1 }}>
                           <Typography variant="caption" color="text.secondary">
-                            Janka Rating
+                            {t('projectDetails.jankaRating')}
                           </Typography>
                           <Typography variant="body2" sx={{ fontWeight: 600 }}>
                             {lumber?.jankaRating?.toLocaleString() || 'N/A'} lbf
@@ -358,7 +360,7 @@ export function ProjectDetails() {
                         </Box>
                         <Box sx={{ flex: 1, textAlign: 'right' }}>
                           <Typography variant="caption" color="text.secondary">
-                            Material Cost
+                            {t('projectDetails.materialCost')}
                           </Typography>
                           <Typography
                             variant="body2"
@@ -376,7 +378,7 @@ export function ProjectDetails() {
                             color="text.secondary"
                             sx={{ display: 'block', mb: 0.5 }}
                           >
-                            Good for:
+                            {t('projectDetails.goodFor')}
                           </Typography>
                           <Stack direction="row" spacing={0.5} flexWrap="wrap" gap={0.5}>
                             {lumber.tags.map((tag: string, tagIdx: number) => (
@@ -408,7 +410,7 @@ export function ProjectDetails() {
         <Card sx={{ mb: 3, borderRadius: 2 }}>
           <CardContent sx={{ p: 3 }}>
             <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-              Finishes
+              {t('projectDetails.finishes')}
             </Typography>
             <Stack spacing={2}>
               {project.finishes.map((finish: any) => {
@@ -457,7 +459,7 @@ export function ProjectDetails() {
                       </Box>
                       <Box sx={{ textAlign: 'right' }}>
                         <Typography variant="body2" color="text.secondary">
-                          Price
+                          {t('common.price')}
                         </Typography>
                         <Typography variant="h6" sx={{ fontWeight: 700, color: 'success.main' }}>
                           {formatCurrency(finish.price)}
@@ -476,12 +478,12 @@ export function ProjectDetails() {
       <Card sx={{ borderRadius: 2 }}>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            Cost Breakdown
+            {t('projectDetails.costBreakdown')}
           </Typography>
           <Stack spacing={1.5}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
               <Typography variant="body1" color="text.secondary">
-                Materials
+                {t('projectDetails.materials')}
               </Typography>
               <Typography variant="body1" fontWeight={600}>
                 {formatCurrency(materialCost)}
@@ -490,7 +492,7 @@ export function ProjectDetails() {
             {finishCost > 0 && (
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body1" color="text.secondary">
-                  Finishes
+                  {t('projectDetails.finishes')}
                 </Typography>
                 <Typography variant="body1" fontWeight={600}>
                   {formatCurrency(finishCost)}
@@ -500,7 +502,7 @@ export function ProjectDetails() {
             {project.laborCost > 0 && (
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body1" color="text.secondary">
-                  Labor
+                  {t('projectDetails.labor')}
                 </Typography>
                 <Typography variant="body1" fontWeight={600}>
                   {formatCurrency(project.laborCost)}
@@ -510,7 +512,7 @@ export function ProjectDetails() {
             {project.miscCost > 0 && (
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body1" color="text.secondary">
-                  Miscellaneous
+                  {t('projectDetails.miscellaneous')}
                 </Typography>
                 <Typography variant="body1" fontWeight={600}>
                   {formatCurrency(project.miscCost)}
@@ -524,7 +526,7 @@ export function ProjectDetails() {
                   color="text.secondary"
                   sx={{ display: 'block', mb: 0.5 }}
                 >
-                  Notes:
+                  {t('common.notes')}:
                 </Typography>
                 <Typography variant="body2">{project.additionalNotes}</Typography>
               </Box>
@@ -540,7 +542,7 @@ export function ProjectDetails() {
               }}
             >
               <Typography variant="h6" fontWeight={700}>
-                Total Cost
+                {t('projectDetails.totalCost')}
               </Typography>
               <Typography variant="h6" fontWeight={700} color="success.main">
                 {formatCurrency(totalCost)}
@@ -553,8 +555,8 @@ export function ProjectDetails() {
       {/* Delete Confirmation Dialog */}
       <ConfirmDialog
         open={deleteConfirmOpen}
-        title="Delete Project"
-        message={`Are you sure you want to delete "${project.name}"? This action cannot be undone.`}
+        title={t('projectDetails.deleteProject')}
+        message={t('projectDetails.deleteProjectConfirm', { name: project.name })}
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}
       />

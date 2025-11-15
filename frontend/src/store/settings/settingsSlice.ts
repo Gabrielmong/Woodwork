@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import type { Settings, Currency, Language, ThemeMode } from '../../types/settings';
 
 const initialState: Settings = {
-  currency: 'CRC',
+  currency: 'USD',
   language: 'en',
   themeMode: 'light',
 };
@@ -23,9 +23,12 @@ const settingsSlice = createSlice({
     updateSettings: (state, action: PayloadAction<Partial<Settings>>) => {
       return { ...state, ...action.payload };
     },
+    resetSettings: () => {
+      return initialState;
+    },
   },
 });
 
-export const { setCurrency, setLanguage, setThemeMode, updateSettings } = settingsSlice.actions;
-
+export const { setCurrency, setLanguage, setThemeMode, updateSettings, resetSettings } =
+  settingsSlice.actions;
 export default settingsSlice.reducer;
