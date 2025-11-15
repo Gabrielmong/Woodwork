@@ -1,4 +1,4 @@
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -104,19 +104,21 @@ export function Sidebar({ open, onClose, variant = 'permanent' }: SidebarProps) 
           borderColor: 'divider',
         }}
       >
-        <Typography
-          variant="h5"
-          component="h1"
-          sx={{
-            fontWeight: 700,
-            background: 'linear-gradient(135deg, #FFFFFF 0%, #E3E8EE 100%)',
-            backgroundClip: 'text',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-          }}
-        >
-          {t('app.title')}
-        </Typography>
+        <Link to="/" style={{ textDecoration: 'none' }}>
+          <Typography
+            variant="h5"
+            component="h1"
+            sx={{
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #FFFFFF 0%, #E3E8EE 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            {t('app.title')}
+          </Typography>
+        </Link>
       </Box>
 
       <Divider />

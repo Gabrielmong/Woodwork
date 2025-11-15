@@ -11,6 +11,7 @@ import {
   Grid,
   Card,
   CardContent,
+  Avatar,
 } from '@mui/material';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import FormatPaintIcon from '@mui/icons-material/FormatPaint';
@@ -18,10 +19,14 @@ import BuildIcon from '@mui/icons-material/Build';
 import FolderIcon from '@mui/icons-material/Folder';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import { useSelector } from 'react-redux';
+import type { RootState } from '../store/store';
 
 export default function Landing() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
   const features = [
     {
@@ -83,34 +88,58 @@ export default function Landing() {
           >
             {t('app.title')}
           </Typography>
-          <Stack direction="row" spacing={2}>
+          {isAuthenticated ? (
             <Button
               variant="outlined"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/app')}
               sx={{
                 textTransform: 'none',
                 borderRadius: 2,
                 px: 3,
               }}
             >
-              {t('landing.signIn')}
+              {user && (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Avatar
+                    sx={{ width: 24, height: 24, bgcolor: 'primary.main' }}
+                    src={user.imageData}
+                  >
+                    {t('landing.goToApp')}
+                  </Avatar>
+                  <Box sx={{ ml: 2 }}>{t('landing.goToApp')}</Box>
+                </Box>
+              )}
             </Button>
-            <Button
-              variant="contained"
-              onClick={() => navigate('/register')}
-              sx={{
-                textTransform: 'none',
-                borderRadius: 2,
-                px: 3,
-                bgcolor: 'primary.main',
-                '&:hover': {
-                  bgcolor: 'primary.dark',
-                },
-              }}
-            >
-              {t('landing.signUp')}
-            </Button>
-          </Stack>
+          ) : (
+            <Stack direction="row" spacing={2}>
+              <Button
+                variant="outlined"
+                onClick={() => navigate('/login')}
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  px: 3,
+                }}
+              >
+                {t('landing.signIn')}
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => navigate('/register')}
+                sx={{
+                  textTransform: 'none',
+                  borderRadius: 2,
+                  px: 3,
+                  bgcolor: 'primary.main',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  },
+                }}
+              >
+                {t('landing.signUp')}
+              </Button>
+            </Stack>
+          )}
         </Toolbar>
       </AppBar>
 
