@@ -80,28 +80,28 @@ export default function Dashboard() {
       value: stats.totalProjects,
       icon: <FolderIcon sx={{ fontSize: 40 }} />,
       color: '#635BFF',
-      action: () => navigate('/dashboard/projects'),
+      action: () => navigate('/app/projects'),
     },
     {
       title: t('dashboard.lumberTypes'),
       value: stats.totalLumber,
       icon: <ViewModuleIcon sx={{ fontSize: 40 }} />,
       color: '#34D399',
-      action: () => navigate('/dashboard/lumber'),
+      action: () => navigate('/app/lumber'),
     },
     {
       title: t('dashboard.finishOptions'),
       value: stats.totalFinishes,
       icon: <FormatPaintIcon sx={{ fontSize: 40 }} />,
       color: '#F59E0B',
-      action: () => navigate('/dashboard/finishes'),
+      action: () => navigate('/app/finishes'),
     },
     {
       title: t('dashboard.toolInventory'),
       value: stats.totalTools,
       icon: <BuildIcon sx={{ fontSize: 40 }} />,
       color: '#EF4444',
-      action: () => navigate('/dashboard/tools'),
+      action: () => navigate('/app/tools'),
     },
   ];
 
@@ -289,7 +289,7 @@ export default function Dashboard() {
               size="large"
               startIcon={<FolderIcon />}
               endIcon={<ArrowForwardIcon />}
-              onClick={() => navigate('/projects?action=new')}
+              onClick={() => navigate('/app/projects?action=new')}
               sx={{
                 py: 2,
                 borderRadius: 2,
@@ -308,7 +308,7 @@ export default function Dashboard() {
               size="large"
               startIcon={<ViewModuleIcon />}
               endIcon={<ArrowForwardIcon />}
-              onClick={() => navigate('/lumber?action=new')}
+              onClick={() => navigate('/app/lumber?action=new')}
               sx={{
                 py: 2,
                 borderRadius: 2,
@@ -327,7 +327,7 @@ export default function Dashboard() {
               size="large"
               startIcon={<FormatPaintIcon />}
               endIcon={<ArrowForwardIcon />}
-              onClick={() => navigate('/finishes?action=new')}
+              onClick={() => navigate('/app/finishes?action=new')}
               sx={{
                 py: 2,
                 borderRadius: 2,
@@ -346,7 +346,7 @@ export default function Dashboard() {
               size="large"
               startIcon={<BuildIcon />}
               endIcon={<ArrowForwardIcon />}
-              onClick={() => navigate('/tools?action=new')}
+              onClick={() => navigate('/app/tools?action=new')}
               sx={{
                 py: 2,
                 borderRadius: 2,

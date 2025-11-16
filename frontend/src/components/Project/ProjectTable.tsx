@@ -236,7 +236,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
         }}
         pageSizeOptions={[5, 10, 25, 50]}
         disableRowSelectionOnClick
-        onRowClick={(params) => navigate(`/dashboard/projects/${params.id}`)}
+        onRowClick={(params) => navigate(`/app/projects/${params.id}`)}
         getRowHeight={() => 'auto'}
         sx={{
           '& .MuiDataGrid-cell': {

@@ -57,7 +57,7 @@ export function ProjectDetails() {
 
   const [deleteProject] = useMutation(DELETE_PROJECT, {
     onCompleted: () => {
-      navigate('/dashboard/projects');
+      navigate('/app/projects');
     },
   });
 
@@ -89,11 +89,17 @@ export function ProjectDetails() {
   if (projectError || !projectData?.project) {
     return (
       <Box>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/dashboard/projects')} sx={{ mb: 3 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate('/app/projects')}
+          sx={{ mb: 3 }}
+        >
           {t('projectDetails.backToProjects')}
         </Button>
         <Typography variant="h4" color="text.secondary">
-          {projectError ? `${t('projectDetails.error')} ${projectError.message}` : t('projectDetails.projectNotFound')}
+          {projectError
+            ? `${t('projectDetails.error')} ${projectError.message}`
+            : t('projectDetails.projectNotFound')}
         </Typography>
       </Box>
     );
@@ -116,9 +122,12 @@ export function ProjectDetails() {
       return total + cost;
     }, 0);
 
-    const finishCost = finishes.reduce((total: number, finish: { id: string; name: string; price: number }) => {
-      return total + (finish?.price || 0);
-    }, 0);
+    const finishCost = finishes.reduce(
+      (total: number, finish: { id: string; name: string; price: number }) => {
+        return total + (finish?.price || 0);
+      },
+      0
+    );
 
     return {
       materialCost,
@@ -178,7 +187,11 @@ export function ProjectDetails() {
     <Box>
       {/* Header */}
       <Box sx={{ mb: 4 }}>
-        <Button startIcon={<ArrowBackIcon />} onClick={() => navigate('/dashboard/projects')} sx={{ mb: 3 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate('/app/projects')}
+          sx={{ mb: 3 }}
+        >
           {t('projectDetails.backToProjects')}
         </Button>
 
@@ -284,7 +297,8 @@ export function ProjectDetails() {
       <Card sx={{ mb: 3, borderRadius: 2 }}>
         <CardContent sx={{ p: 3 }}>
           <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-            {t('projectDetails.materials')} ({totalBoardFootage.toFixed(2)} {t('projectDetails.bfTotal')})
+            {t('projectDetails.materials')} ({totalBoardFootage.toFixed(2)}{' '}
+            {t('projectDetails.bfTotal')})
           </Typography>
           <Stack spacing={2}>
             {project.boards.map((board: any, idx: number) => {
@@ -325,7 +339,8 @@ export function ProjectDetails() {
                           {(lengthInInches / 12).toFixed(2)}')
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {t('projectDetails.quantity')}: {board.quantity} {t('projectDetails.boards')}
+                          {t('projectDetails.quantity')}: {board.quantity}{' '}
+                          {t('projectDetails.boards')}
                         </Typography>
                       </Box>
                       <Box sx={{ textAlign: 'right' }}>
