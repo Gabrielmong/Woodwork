@@ -18,14 +18,13 @@ import FormatPaintIcon from '@mui/icons-material/FormatPaint';
 import BuildIcon from '@mui/icons-material/Build';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
-import InventoryIcon from '@mui/icons-material/Inventory';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import { GET_DASHBOARD_STATS, GET_SETTINGS } from '../../graphql/operations';
 import { useCurrency } from '../../utils/currency';
 import { useDispatch } from 'react-redux';
 import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';
 import type { Currency, Language, ThemeMode } from '../../types';
-import { Money, Paid } from '@mui/icons-material';
+import { Paid } from '@mui/icons-material';
 
 export default function Dashboard() {
   const navigate = useNavigate();
