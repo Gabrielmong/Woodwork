@@ -9,11 +9,13 @@ import {
   RESTORE_PROJECT,
   GET_FINISHES,
   GET_LUMBERS,
+  GET_SHEET_GOODS,
 } from '../../graphql/operations';
 import { ProjectList } from './ProjectList';
 import { ProjectTable } from './ProjectTable';
 import { ProjectForm } from './ProjectForm';
 import type { Project, CreateProjectInput } from '../../types/project';
+import { ProjectStatus } from '../../types/project';
 import { ConfirmDialog, ViewLayout } from '../General';
 import { useQueryParams } from '../../hooks/useQueryParams';
 
@@ -35,6 +37,7 @@ export function ProjectTab() {
 
   const { data: finishesData } = useQuery(GET_FINISHES);
   const { data: lumberData } = useQuery(GET_LUMBERS);
+  const { data: sheetGoodsData } = useQuery(GET_SHEET_GOODS);
 
   const activeFinishes = useMemo(() => {
     return (finishesData?.finishes || []).filter((finish: any) => !finish.isDeleted);
@@ -43,6 +46,10 @@ export function ProjectTab() {
   const activeLumber = useMemo(() => {
     return (lumberData?.lumbers || []).filter((lumber: any) => !lumber.isDeleted);
   }, [lumberData]);
+
+  const activeSheetGoods = useMemo(() => {
+    return (sheetGoodsData?.sheetGoods || []).filter((sheetGood: any) => !sheetGood.isDeleted);
+  }, [sheetGoodsData]);
 
   const [createProject] = useMutation(CREATE_PROJECT, {
     refetchQueries: [{ query: GET_PROJECTS, variables: { includeDeleted: showDeleted } }],
@@ -144,6 +151,19 @@ export function ProjectTab() {
     }
   };
 
+  const handleStatusChange = async (projectId: string, newStatus: ProjectStatus) => {
+    try {
+      await updateProjectMutation({
+        variables: {
+          id: projectId,
+          input: { status: newStatus },
+        },
+      });
+    } catch (error) {
+      console.error('Error updating project status:', error);
+    }
+  };
+
   const loading = projectsLoading;
 
   if (loading) {
@@ -183,6 +203,7 @@ export function ProjectTab() {
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
+            onStatusChange={handleStatusChange}
           />
         }
         tableView={
@@ -191,6 +212,7 @@ export function ProjectTab() {
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
+            onStatusChange={handleStatusChange}
           />
         }
       />
@@ -202,6 +224,7 @@ export function ProjectTab() {
         editingProject={editingProject}
         lumberOptions={activeLumber}
         finishOptions={activeFinishes}
+        sheetGoodOptions={activeSheetGoods}
       />
 
       <ConfirmDialog

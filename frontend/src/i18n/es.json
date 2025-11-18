@@ -41,6 +41,7 @@
     "projects": "Proyectos",
     "lumber": "Inventario de Madera",
     "finishes": "Acabados de Madera",
+    "sheetGoods": "Láminas y Tableros",
     "tools": "Herramientas",
     "account": "Cuenta",
     "logout": "Cerrar Sesión"
@@ -51,6 +52,7 @@
     "activeProjects": "Proyectos Activos",
     "lumberTypes": "Tipos de Madera",
     "finishOptions": "Opciones de Acabado",
+    "sheetGoodOptions": "Láminas y Tableros",
     "toolInventory": "Inventario de Herramientas",
     "totalProjectValue": "Valor Total del Proyecto",
     "totalBoardFeet": "Total de Pies Tabla",
@@ -63,6 +65,7 @@
     "newProject": "Nuevo Proyecto",
     "addLumber": "Agregar Madera",
     "addFinish": "Agregar Acabado",
+    "addSheetGood": "Agregar Lámina/Tablero",
     "addTool": "Agregar Herramienta",
     "viewAll": "Ver Todos",
     "totalProfit": "Ganancia Total"
@@ -96,6 +99,23 @@
     "goodFor": "Bueno para:",
     "deleteConfirmMessage": "¿Está seguro de que desea eliminar este acabado? Esta acción lo marcará como eliminado pero se podrá restaurar más tarde."
   },
+  "sheetGoods": {
+    "title": "Láminas y Tableros",
+    "subtitle": "Administre su inventario de láminas y tableros, incluyendo madera contrachapada, MDF y otros materiales en lámina",
+    "add": "Agregar Lámina/Tablero",
+    "emptyTitle": "No hay láminas/tableros en inventario",
+    "emptySubtitle": "Comience agregando su primera lámina o tablero para rastrear madera contrachapada, MDF, OSB y otros materiales en lámina",
+    "name": "Nombre",
+    "description": "Descripción",
+    "width": "Ancho",
+    "length": "Largo",
+    "thickness": "Grosor",
+    "materialType": "Tipo de Material",
+    "price": "Precio",
+    "dimensions": "Dimensiones",
+    "goodFor": "Bueno para:",
+    "deleteConfirmMessage": "¿Está seguro de que desea eliminar esta lámina/tablero? Esta acción lo marcará como eliminado pero se podrá restaurar más tarde."
+  },
   "tools": {
     "title": "Inventario de Herramientas",
     "subtitle": "Administre sus herramientas, realice un seguimiento de las compras y organice su taller",
@@ -125,6 +145,14 @@
     "totalCost": "Costo Total",
     "boards": "Tablas",
     "boardFeet": "Pies Tabla"
+  },
+  "project": {
+    "status": {
+      "planned": "Planificado",
+      "inProgress": "En Progreso",
+      "finishing": "Finalizando",
+      "completed": "Completado"
+    }
   },
   "settings": {
     "title": "Configuración",

@@ -2,6 +2,7 @@ import { GraphQLScalarType, Kind } from 'graphql';
 import { userResolvers } from './userResolvers';
 import { lumberResolvers } from './lumberResolvers';
 import { finishResolvers } from './finishResolvers';
+import { sheetGoodResolvers } from './sheetGoodResolvers';
 import { toolResolvers } from './toolResolvers';
 import { projectResolvers } from './projectResolvers';
 import { settingsResolvers } from './settingsResolvers';
@@ -39,6 +40,7 @@ export const resolvers = {
     ...userResolvers.Query,
     ...lumberResolvers.Query,
     ...finishResolvers.Query,
+    ...sheetGoodResolvers.Query,
     ...toolResolvers.Query,
     ...projectResolvers.Query,
     ...settingsResolvers.Query,
@@ -49,6 +51,7 @@ export const resolvers = {
     ...userResolvers.Mutation,
     ...lumberResolvers.Mutation,
     ...finishResolvers.Mutation,
+    ...sheetGoodResolvers.Mutation,
     ...toolResolvers.Mutation,
     ...projectResolvers.Mutation,
     ...settingsResolvers.Mutation,

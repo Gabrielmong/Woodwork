@@ -16,6 +16,7 @@ import {
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import FormatPaintIcon from '@mui/icons-material/FormatPaint';
+import GridOnIcon from '@mui/icons-material/GridOn';
 import BuildIcon from '@mui/icons-material/Build';
 import FolderIcon from '@mui/icons-material/Folder';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -70,6 +71,11 @@ export function Sidebar({ open, onClose, variant = 'permanent' }: SidebarProps) 
       text: t('nav.finishes'),
       icon: <FormatPaintIcon />,
       path: '/app/finishes',
+    },
+    {
+      text: t('nav.sheetGoods'),
+      icon: <GridOnIcon />,
+      path: '/app/sheet-goods',
     },
     {
       text: t('nav.tools'),

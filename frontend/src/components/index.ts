@@ -4,6 +4,7 @@ export * from './Finish';
 export * from './General';
 export * from './Lumber';
 export * from './Project';
+export * from './SheetGood';
 export * from './Tool';
 export * from './Appbar';
 export * from './Footer';

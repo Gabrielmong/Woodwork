@@ -6,14 +6,14 @@ import {
   type GridRenderCellParams,
   GridActionsCellItem,
 } from '@mui/x-data-grid';
-import { Chip, Stack, Box } from '@mui/material';
+import { Chip, Stack, Box, Select, MenuItem, FormControl } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreIcon from '@mui/icons-material/Restore';
 import ShareIcon from '@mui/icons-material/Share';
-import type { Project } from '../../types/project';
+import type { Project, ProjectSheetGood } from '../../types/project';
 import type { Finish } from '../../types/finish';
-import { calculateTotalBoardFootage } from '../../types/project';
+import { calculateTotalBoardFootage, ProjectStatus } from '../../types/project';
 
 const truncateText = (text: string, maxLength: number = 150) => {
   if (text.length <= maxLength) return text;
@@ -25,9 +25,10 @@ interface ProjectTableProps {
   onEdit: (project: Project) => void;
   onDelete: (id: string) => void;
   onRestore: (id: string) => void;
+  onStatusChange?: (projectId: string, newStatus: ProjectStatus) => void;
 }
 
-export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectTableProps) {
+export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusChange }: ProjectTableProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -40,9 +41,25 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
     }
   };
 
+  const getStatusChip = (status: ProjectStatus) => {
+    switch (status) {
+      case ProjectStatus.PLANNED:
+        return <Chip label={t('project.status.planned')} size="small" color="default" sx={{ height: 24 }} />;
+      case ProjectStatus.IN_PROGRESS:
+        return <Chip label={t('project.status.inProgress')} size="small" color="info" sx={{ height: 24 }} />;
+      case ProjectStatus.FINISHING:
+        return <Chip label={t('project.status.finishing')} size="small" color="warning" sx={{ height: 24 }} />;
+      case ProjectStatus.COMPLETED:
+        return <Chip label={t('project.status.completed')} size="small" color="success" sx={{ height: 24 }} />;
+      default:
+        return <Chip label={status} size="small" color="default" sx={{ height: 24 }} />;
+    }
+  };
+
   const calculateProjectCost = (project: Project) => {
     const boards = project.boards || [];
     const finishes = project.finishes || [];
+    const projectSheetGoods = project.projectSheetGoods || [];
 
     const materialCost = boards.reduce((total, board) => {
       const lumber = board.lumber;
@@ -57,10 +74,15 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
       return total + (finish?.price || 0);
     }, 0);
 
+    const sheetGoodCost = projectSheetGoods.reduce((total, projectSheetGood) => {
+      return total + ((projectSheetGood.sheetGood?.price || 0) * projectSheetGood.quantity);
+    }, 0);
+
     return {
       materialCost,
       finishCost,
-      totalCost: materialCost + finishCost + (project?.laborCost || 0) + (project?.miscCost || 0),
+      sheetGoodCost,
+      totalCost: materialCost + finishCost + sheetGoodCost + (project?.laborCost || 0) + (project?.miscCost || 0),
     };
   };
 
@@ -142,6 +164,36 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
       ),
     },
     {
+      field: 'projectSheetGoods',
+      headerName: 'Sheet Goods',
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <Stack direction="row" spacing={0.5} flexWrap="wrap" gap={0.5} sx={{ py: 0.5 }}>
+          {params.value && params.value.length > 0 ? (
+            params.value.map((projectSheetGood: ProjectSheetGood) => {
+              return (
+                <Chip
+                  key={projectSheetGood.id}
+                  label={`${projectSheetGood.sheetGood?.name || t('common.unknown')} (${projectSheetGood.quantity})`}
+                  size="small"
+                  sx={{
+                    bgcolor: 'background.default',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    height: '24px',
+                  }}
+                />
+              );
+            })
+          ) : (
+            <Box sx={{ color: 'text.disabled', fontSize: '0.875rem' }}>—</Box>
+          )}
+        </Stack>
+      ),
+    },
+    {
       field: 'totalCost',
       headerName: t('projectDetails.totalCost'),
       width: 130,
@@ -153,15 +205,66 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore }: ProjectT
       },
     },
     {
-      field: 'isDeleted',
+      field: 'status',
       headerName: t('common.status'),
-      width: 100,
-      renderCell: (params: GridRenderCellParams) =>
-        params.value ? (
-          <Chip label={t('common.deleted')} size="small" color="error" sx={{ height: 24 }} />
-        ) : (
-          <Chip label={t('common.active')} size="small" color="success" sx={{ height: 24 }} />
-        ),
+      width: 150,
+      renderCell: (params: GridRenderCellParams) => {
+        const project = params.row as Project;
+        if (project.isDeleted || !onStatusChange) {
+          return getStatusChip(params.value as ProjectStatus);
+        }
+        return (
+          <FormControl size="small" fullWidth onClick={(e) => e.stopPropagation()}>
+            <Select
+              value={params.value}
+              onChange={(e) => {
+                e.stopPropagation();
+                onStatusChange(project.id, e.target.value as ProjectStatus);
+              }}
+              size="small"
+              sx={{
+                '& .MuiSelect-select': {
+                  py: 0.5,
+                  fontSize: '0.875rem',
+                },
+              }}
+            >
+              <MenuItem value={ProjectStatus.PLANNED}>
+                <Chip
+                  label={t('project.status.planned')}
+                  size="small"
+                  color="default"
+                  sx={{ height: 22, fontSize: '0.75rem' }}
+                />
+              </MenuItem>
+              <MenuItem value={ProjectStatus.IN_PROGRESS}>
+                <Chip
+                  label={t('project.status.inProgress')}
+                  size="small"
+                  color="info"
+                  sx={{ height: 22, fontSize: '0.75rem' }}
+                />
+              </MenuItem>
+              <MenuItem value={ProjectStatus.FINISHING}>
+                <Chip
+                  label={t('project.status.finishing')}
+                  size="small"
+                  color="warning"
+                  sx={{ height: 22, fontSize: '0.75rem' }}
+                />
+              </MenuItem>
+              <MenuItem value={ProjectStatus.COMPLETED}>
+                <Chip
+                  label={t('project.status.completed')}
+                  size="small"
+                  color="success"
+                  sx={{ height: 22, fontSize: '0.75rem' }}
+                />
+              </MenuItem>
+            </Select>
+          </FormControl>
+        );
+      },
     },
     {
       field: 'actions',

@@ -8,7 +8,7 @@ import Register from '../pages/Register';
 import Landing from '../pages/Landing';
 import SharedProject from '../pages/SharedProject';
 import TermsAndConditions from '../pages/TermsAndConditions';
-import { FinishTab, PrivateRoute, ProjectDetails, ProjectTab, ToolTab } from '../components';
+import { FinishTab, PrivateRoute, ProjectDetails, ProjectTab, SheetGoodTab, ToolTab } from '../components';
 
 export const router = createBrowserRouter([
   {
@@ -50,6 +50,10 @@ export const router = createBrowserRouter([
       {
         path: 'finishes',
         element: <FinishTab />,
+      },
+      {
+        path: 'sheet-goods',
+        element: <SheetGoodTab />,
       },
       {
         path: 'tools',

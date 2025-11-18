@@ -37,6 +37,11 @@ export const projectResolvers = {
             },
           },
           finishes: true,
+          projectSheetGoods: {
+            include: {
+              sheetGood: true,
+            },
+          },
         },
         orderBy: { createdAt: 'desc' },
       });
@@ -52,6 +57,11 @@ export const projectResolvers = {
             },
           },
           finishes: true,
+          projectSheetGoods: {
+            include: {
+              sheetGood: true,
+            },
+          },
         },
       });
 
@@ -75,6 +85,11 @@ export const projectResolvers = {
             },
           },
           finishes: true,
+          projectSheetGoods: {
+            include: {
+              sheetGood: true,
+            },
+          },
           user: {
             select: {
               firstName: true,
@@ -105,18 +120,30 @@ export const projectResolvers = {
   Mutation: {
     createProject: async (_: any, { input }: any, context: any) => {
       const user = requireAuth(context);
-      const { boards, finishIds, ...projectData } = input;
+      const { boards, finishIds, projectSheetGoods, ...projectData } = input;
 
       return prisma.project.create({
         data: {
           ...projectData,
           userId: user.userId,
-          boards: {
-            create: boards,
-          },
-          finishes: {
-            connect: finishIds.map((id: string) => ({ id })),
-          },
+          ...(boards &&
+            boards.length > 0 && {
+              boards: {
+                create: boards,
+              },
+            }),
+          ...(finishIds &&
+            finishIds.length > 0 && {
+              finishes: {
+                connect: finishIds.map((id: string) => ({ id })),
+              },
+            }),
+          ...(projectSheetGoods &&
+            projectSheetGoods.length > 0 && {
+              projectSheetGoods: {
+                create: projectSheetGoods,
+              },
+            }),
         },
         include: {
           boards: {
@@ -125,12 +152,17 @@ export const projectResolvers = {
             },
           },
           finishes: true,
+          projectSheetGoods: {
+            include: {
+              sheetGood: true,
+            },
+          },
         },
       });
     },
 
     updateProject: async (_: any, { id, input }: any, context: any) => {
-      const { boards, finishIds, ...projectData } = input;
+      const { boards, finishIds, projectSheetGoods, ...projectData } = input;
 
       const project = await prisma.project.findUnique({
         where: { id },
@@ -149,6 +181,13 @@ export const projectResolvers = {
         });
       }
 
+      // Delete existing project sheet goods if they are being updated
+      if (projectSheetGoods) {
+        await prisma.projectSheetGood.deleteMany({
+          where: { projectId: id },
+        });
+      }
+
       return prisma.project.update({
         where: { id },
         data: {
@@ -163,6 +202,11 @@ export const projectResolvers = {
               set: finishIds.map((finishId: string) => ({ id: finishId })),
             },
           }),
+          ...(projectSheetGoods && {
+            projectSheetGoods: {
+              create: projectSheetGoods,
+            },
+          }),
         },
         include: {
           boards: {
@@ -171,6 +215,11 @@ export const projectResolvers = {
             },
           },
           finishes: true,
+          projectSheetGoods: {
+            include: {
+              sheetGood: true,
+            },
+          },
         },
       });
     },
@@ -196,6 +245,11 @@ export const projectResolvers = {
             },
           },
           finishes: true,
+          projectSheetGoods: {
+            include: {
+              sheetGood: true,
+            },
+          },
         },
       });
     },
@@ -221,6 +275,11 @@ export const projectResolvers = {
             },
           },
           finishes: true,
+          projectSheetGoods: {
+            include: {
+              sheetGood: true,
+            },
+          },
         },
       });
     },
@@ -265,6 +324,12 @@ export const projectResolvers = {
       }, 0);
     },
 
+    sheetGoodsCost: (parent: any) => {
+      return parent.projectSheetGoods.reduce((total: number, projectSheetGood: any) => {
+        return total + projectSheetGood.sheetGood.price * projectSheetGood.quantity;
+      }, 0);
+    },
+
     finishCost: (parent: any) => {
       return parent.finishes.reduce((total: number, finish: any) => {
         return total + finish.price;
@@ -286,7 +351,14 @@ export const projectResolvers = {
         return total + finish.price;
       }, 0);
 
-      return materialCost + finishCost + parent.laborCost + parent.miscCost;
+      const sheetGoodsCost = parent.projectSheetGoods.reduce(
+        (total: number, projectSheetGood: any) => {
+          return total + projectSheetGood.sheetGood.price * projectSheetGood.quantity;
+        },
+        0
+      );
+
+      return materialCost + finishCost + sheetGoodsCost + parent.laborCost + parent.miscCost;
     },
   },
 
@@ -327,9 +399,17 @@ export const projectResolvers = {
       }, 0);
     },
 
+    sheetGoodsCost: (parent: any) => {
+      if (!parent.projectSheetGoods || parent.projectSheetGoods.length === 0) return 0;
+      return parent.projectSheetGoods.reduce((total: number, projectSheetGood: any) => {
+        return total + (projectSheetGood.sheetGood?.price || 0) * projectSheetGood.quantity;
+      }, 0);
+    },
+
     totalCost: (parent: any) => {
       const boards = parent.boards || [];
       const finishes = parent.finishes || [];
+      const projectSheetGoods = parent.projectSheetGoods || [];
 
       const materialCost = boards.reduce((total: number, board: any) => {
         const boardFeet = calculateBoardFeet(
@@ -345,7 +425,17 @@ export const projectResolvers = {
         return total + (finish?.price || 0);
       }, 0);
 
-      return materialCost + finishCost + (parent.laborCost || 0) + (parent.miscCost || 0);
+      const sheetGoodsCost = projectSheetGoods.reduce((total: number, projectSheetGood: any) => {
+        return total + (projectSheetGood.sheetGood?.price || 0) * projectSheetGood.quantity;
+      }, 0);
+
+      return (
+        materialCost +
+        finishCost +
+        sheetGoodsCost +
+        (parent.laborCost || 0) +
+        (parent.miscCost || 0)
+      );
     },
 
     createdBy: (parent: any) => {

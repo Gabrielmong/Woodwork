@@ -26,6 +26,7 @@ model User {
   // Relations
   lumber            Lumber[]
   finishes          Finish[]
+  sheetGoods        SheetGood[]
   projects          Project[]
   tools             Tool[]
   settings          Settings?
@@ -79,25 +80,59 @@ model Finish {
   @@map("finishes")
 }
 
-model Project {
-  id                String    @id @default(uuid())
+model SheetGood {
+  id                String             @id @default(uuid())
   name              String
   description       String
-  laborCost         Float     @default(0)
-  miscCost          Float     @default(0)
-  additionalNotes   String?
-  isDeleted         Boolean   @default(false)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  width             Float              // inches
+  length            Float              // inches
+  thickness         Float              // inches
+  price             Float
+  materialType      String             // aglomerate, ply, melamine, etc
+  tags              String[]
+  isDeleted         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
 
   // Relations
   userId            String
-  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  boards            Board[]
-  finishes          Finish[]  @relation("ProjectFinishes")
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectSheetGoods ProjectSheetGood[]
 
   @@index([userId])
   @@index([isDeleted])
+  @@map("sheet_goods")
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  FINISHING
+  COMPLETED
+}
+
+model Project {
+  id                String             @id @default(uuid())
+  name              String
+  description       String
+  status            ProjectStatus      @default(PLANNED)
+  laborCost         Float              @default(0)
+  miscCost          Float              @default(0)
+  additionalNotes   String?
+  isDeleted         Boolean            @default(false)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  // Relations
+  userId            String
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  boards            Board[]
+  finishes          Finish[]           @relation("ProjectFinishes")
+  projectSheetGoods ProjectSheetGood[]
+
+  @@index([userId])
+  @@index([isDeleted])
+  @@index([status])
   @@map("projects")
 }
 
@@ -120,6 +155,24 @@ model Board {
   @@index([projectId])
   @@index([lumberId])
   @@map("boards")
+}
+
+model ProjectSheetGood {
+  id          String    @id @default(uuid())
+  quantity    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  projectId   String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  sheetGoodId String
+  sheetGood   SheetGood @relation(fields: [sheetGoodId], references: [id])
+
+  @@index([projectId])
+  @@index([sheetGoodId])
+  @@map("project_sheet_goods")
 }
 
 model Tool {

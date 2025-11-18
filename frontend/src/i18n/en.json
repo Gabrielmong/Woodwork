@@ -41,6 +41,7 @@
     "projects": "Projects",
     "lumber": "Lumber",
     "finishes": "Finishes",
+    "sheetGoods": "Sheet Goods",
     "tools": "Tools",
     "account": "Account",
     "logout": "Logout"
@@ -51,6 +52,7 @@
     "activeProjects": "Active Projects",
     "lumberTypes": "Lumber Types",
     "finishOptions": "Finish Options",
+    "sheetGoodOptions": "Sheet Goods",
     "toolInventory": "Tool Inventory",
     "totalProjectValue": "Total Project Value",
     "totalBoardFeet": "Total Board Feet",
@@ -63,6 +65,7 @@
     "newProject": "New Project",
     "addLumber": "Add Lumber",
     "addFinish": "Add Finish",
+    "addSheetGood": "Add Sheet Good",
     "addTool": "Add Tool",
     "viewAll": "View All",
     "totalProfit": "Total Profit"
@@ -96,6 +99,23 @@
     "goodFor": "Good for:",
     "deleteConfirmMessage": "Are you sure you want to delete this finish? This action will mark it as deleted but can be restored later."
   },
+  "sheetGoods": {
+    "title": "Sheet Goods",
+    "subtitle": "Manage your sheet goods inventory, including plywood, MDF, and other sheet materials",
+    "add": "Add Sheet Good",
+    "emptyTitle": "No sheet goods in inventory",
+    "emptySubtitle": "Get started by adding your first sheet good to track plywood, MDF, OSB, and other sheet materials",
+    "name": "Name",
+    "description": "Description",
+    "width": "Width",
+    "length": "Length",
+    "thickness": "Thickness",
+    "materialType": "Material Type",
+    "price": "Price",
+    "dimensions": "Dimensions",
+    "goodFor": "Good for:",
+    "deleteConfirmMessage": "Are you sure you want to delete this sheet good? This action will mark it as deleted but can be restored later."
+  },
   "tools": {
     "title": "Tool Inventory",
     "subtitle": "Manage your tools, track purchases, and organize your workshop",
@@ -125,6 +145,14 @@
     "totalCost": "Total Cost",
     "boards": "Boards",
     "boardFeet": "Board Feet"
+  },
+  "project": {
+    "status": {
+      "planned": "Planned",
+      "inProgress": "In Progress",
+      "finishing": "Finishing",
+      "completed": "Completed"
+    }
   },
   "settings": {
     "title": "Settings",

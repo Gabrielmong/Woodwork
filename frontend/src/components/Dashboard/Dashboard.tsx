@@ -67,6 +67,7 @@ export default function Dashboard() {
     totalProjects: 0,
     totalLumber: 0,
     totalFinishes: 0,
+    totalSheetGoods: 0,
     totalTools: 0,
     totalProjectCost: 0,
     totalBoardFeet: 0,
@@ -95,6 +96,13 @@ export default function Dashboard() {
       icon: <FormatPaintIcon sx={{ fontSize: 40 }} />,
       color: '#F59E0B',
       action: () => navigate('/app/finishes'),
+    },
+    {
+      title: t('dashboard.sheetGoodOptions'),
+      value: stats.totalSheetGoods,
+      icon: <ViewModuleIcon sx={{ fontSize: 40 }} />,
+      color: '#8B5CF6',
+      action: () => navigate('/app/sheet-goods'),
     },
     {
       title: t('dashboard.toolInventory'),
@@ -161,7 +169,7 @@ export default function Dashboard() {
       {/* Overview Cards */}
       <Grid container spacing={{ xs: 2, md: 3, lg: 4 }} sx={{ mb: { xs: 4, md: 6 } }}>
         {statCards.map((stat, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 6, lg: 3 }} key={index}>
+          <Grid size={{ xs: 12, sm: 6, md: 4, lg: 2.4 }} key={index}>
             <Card
               sx={{
                 height: '100%',
@@ -282,7 +290,7 @@ export default function Dashboard() {
         </Typography>
 
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
             <Button
               variant="contained"
               fullWidth
@@ -301,7 +309,7 @@ export default function Dashboard() {
               {t('dashboard.newProject')}
             </Button>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
             <Button
               variant="outlined"
               fullWidth
@@ -320,7 +328,7 @@ export default function Dashboard() {
               {t('dashboard.addLumber')}
             </Button>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
             <Button
               variant="outlined"
               fullWidth
@@ -339,7 +347,26 @@ export default function Dashboard() {
               {t('dashboard.addFinish')}
             </Button>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 3 }}>
+          <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
+            <Button
+              variant="outlined"
+              fullWidth
+              size="large"
+              startIcon={<ViewModuleIcon />}
+              endIcon={<ArrowForwardIcon />}
+              onClick={() => navigate('/app/sheet-goods?action=new')}
+              sx={{
+                py: 2,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontSize: '1rem',
+                fontWeight: 600,
+              }}
+            >
+              {t('dashboard.addSheetGood')}
+            </Button>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 2.4 }}>
             <Button
               variant="outlined"
               fullWidth

@@ -18,6 +18,10 @@ import {
   AccordionSummary,
   AccordionDetails,
   Snackbar,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
@@ -29,6 +33,7 @@ import {
   DELETE_PROJECT,
   GET_FINISHES,
   GET_LUMBERS,
+  GET_SHEET_GOODS,
   UPDATE_PROJECT,
 } from '../../graphql/operations';
 import {
@@ -37,6 +42,7 @@ import {
   type CreateProjectInput,
   type Project,
   type Board,
+  ProjectStatus,
 } from '../../types/project';
 import { useCurrency } from '../../utils/currency';
 import { ConfirmDialog } from '../General';
@@ -75,6 +81,7 @@ export function ProjectDetails() {
 
   const { data: finishesData } = useQuery(GET_FINISHES);
   const { data: lumberData } = useQuery(GET_LUMBERS);
+  const { data: sheetGoodsData } = useQuery(GET_SHEET_GOODS);
 
   const activeFinishes = useMemo(() => {
     return (finishesData?.finishes || []).filter((finish: any) => !finish.isDeleted);
@@ -83,6 +90,10 @@ export function ProjectDetails() {
   const activeLumber = useMemo(() => {
     return (lumberData?.lumbers || []).filter((lumber: any) => !lumber.isDeleted);
   }, [lumberData]);
+
+  const activeSheetGoods = useMemo(() => {
+    return (sheetGoodsData?.sheetGoods || []).filter((sheetGood: any) => !sheetGood.isDeleted);
+  }, [sheetGoodsData]);
 
   if (loading) {
     return (
@@ -116,6 +127,7 @@ export function ProjectDetails() {
   const project = projectData.project;
   const boards = project?.boards || [];
   const finishes = project?.finishes || [];
+  const projectSheetGoods = project?.projectSheetGoods || [];
 
   const calculateProjectCost = () => {
     const materialCost = boards.reduce((total: number, board: Board) => {
@@ -137,14 +149,22 @@ export function ProjectDetails() {
       0
     );
 
+    const sheetGoodCost = projectSheetGoods.reduce(
+      (total: number, projectSheetGood: any) => {
+        return total + ((projectSheetGood.sheetGood?.price || 0) * projectSheetGood.quantity);
+      },
+      0
+    );
+
     return {
       materialCost,
       finishCost,
-      totalCost: materialCost + finishCost + (project?.laborCost || 0) + (project?.miscCost || 0),
+      sheetGoodCost,
+      totalCost: materialCost + finishCost + sheetGoodCost + (project?.laborCost || 0) + (project?.miscCost || 0),
     };
   };
 
-  const { materialCost, finishCost, totalCost } = calculateProjectCost();
+  const { materialCost, finishCost, sheetGoodCost, totalCost } = calculateProjectCost();
   const totalBoardFootage = calculateTotalBoardFootage(project?.boards || []);
 
   const handleDelete = () => {
@@ -202,6 +222,19 @@ export function ProjectDetails() {
     }
   };
 
+  const handleStatusChange = async (newStatus: ProjectStatus) => {
+    try {
+      await updateProjectMutation({
+        variables: {
+          id: project.id,
+          input: { status: newStatus },
+        },
+      });
+    } catch (error) {
+      console.error('Error updating status:', error);
+    }
+  };
+
   return (
     <Box>
       <Snackbar
@@ -228,7 +261,7 @@ export function ProjectDetails() {
           alignItems={{ xs: 'flex-start', sm: 'center' }}
           spacing={2}
         >
-          <Box>
+          <Box sx={{ flex: 1 }}>
             <Typography
               variant="h3"
               component="h1"
@@ -252,7 +285,49 @@ export function ProjectDetails() {
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <FormControl size="small" sx={{ minWidth: 150 }}>
+              <InputLabel>{t('common.status')}</InputLabel>
+              <Select
+                value={project.status}
+                onChange={(e) => handleStatusChange(e.target.value as ProjectStatus)}
+                label={t('common.status')}
+                size="small"
+              >
+                <MenuItem value={ProjectStatus.PLANNED}>
+                  <Chip
+                    label={t('project.status.planned')}
+                    size="small"
+                    color="default"
+                    sx={{ height: 22, fontSize: '0.75rem' }}
+                  />
+                </MenuItem>
+                <MenuItem value={ProjectStatus.IN_PROGRESS}>
+                  <Chip
+                    label={t('project.status.inProgress')}
+                    size="small"
+                    color="info"
+                    sx={{ height: 22, fontSize: '0.75rem' }}
+                  />
+                </MenuItem>
+                <MenuItem value={ProjectStatus.FINISHING}>
+                  <Chip
+                    label={t('project.status.finishing')}
+                    size="small"
+                    color="warning"
+                    sx={{ height: 22, fontSize: '0.75rem' }}
+                  />
+                </MenuItem>
+                <MenuItem value={ProjectStatus.COMPLETED}>
+                  <Chip
+                    label={t('project.status.completed')}
+                    size="small"
+                    color="success"
+                    sx={{ height: 22, fontSize: '0.75rem' }}
+                  />
+                </MenuItem>
+              </Select>
+            </FormControl>
             <IconButton
               onClick={handleShare}
               sx={{
@@ -547,6 +622,85 @@ export function ProjectDetails() {
         </Card>
       )}
 
+      {/* Sheet Goods */}
+      {project.projectSheetGoods && project.projectSheetGoods.length > 0 && (
+        <Card sx={{ mb: 3, borderRadius: 2 }}>
+          <CardContent sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+              Sheet Goods
+            </Typography>
+            <Stack spacing={2}>
+              {project.projectSheetGoods.map((projectSheetGood: any) => {
+                const sheetGood = projectSheetGood.sheetGood;
+                if (!sheetGood) return null;
+
+                return (
+                  <Paper
+                    key={projectSheetGood.id}
+                    sx={{
+                      p: 2.5,
+                      bgcolor: 'rgba(99, 91, 255, 0.03)',
+                      borderRadius: 2,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                    }}
+                  >
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="flex-start"
+                      spacing={2}
+                    >
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                          {sheetGood.name} <Chip label={`Qty: ${projectSheetGood.quantity}`} size="small" sx={{ ml: 1 }} />
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 0.5 }}>
+                          {sheetGood.description}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+                          Dimensions: {sheetGood.width}" × {sheetGood.length}" × {sheetGood.thickness}" • Material: {sheetGood.materialType}
+                        </Typography>
+                        {sheetGood.tags && sheetGood.tags.length > 0 && (
+                          <Stack direction="row" spacing={0.5} flexWrap="wrap" gap={0.5}>
+                            {sheetGood.tags.map((tag: string, idx: number) => (
+                              <Chip
+                                key={idx}
+                                label={tag}
+                                size="small"
+                                sx={{
+                                  bgcolor: 'background.default',
+                                  fontWeight: 500,
+                                  fontSize: '0.75rem',
+                                }}
+                              />
+                            ))}
+                          </Stack>
+                        )}
+                      </Box>
+                      <Box sx={{ textAlign: 'right' }}>
+                        <Typography variant="body2" color="text.secondary">
+                          Unit Price
+                        </Typography>
+                        <Typography variant="body1" sx={{ fontWeight: 600, mb: 1 }}>
+                          {formatCurrency(sheetGood.price)}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Total Cost
+                        </Typography>
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: 'success.main' }}>
+                          {formatCurrency(sheetGood.price * projectSheetGood.quantity)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+                  </Paper>
+                );
+              })}
+            </Stack>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Cost Breakdown */}
       <Card sx={{ borderRadius: 2 }}>
         <CardContent sx={{ p: 3 }}>
@@ -569,6 +723,16 @@ export function ProjectDetails() {
                 </Typography>
                 <Typography variant="body1" fontWeight={600}>
                   {formatCurrency(finishCost)}
+                </Typography>
+              </Box>
+            )}
+            {sheetGoodCost > 0 && (
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="body1" color="text.secondary">
+                  Sheet Goods
+                </Typography>
+                <Typography variant="body1" fontWeight={600}>
+                  {formatCurrency(sheetGoodCost)}
                 </Typography>
               </Box>
             )}
@@ -641,6 +805,7 @@ export function ProjectDetails() {
         editingProject={editingProject}
         lumberOptions={activeLumber}
         finishOptions={activeFinishes}
+        sheetGoodOptions={activeSheetGoods}
       />
     </Box>
   );

@@ -27,6 +27,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import { GET_SHARED_PROJECT } from '../graphql/operations';
 import type { SharedProject } from '../types/project';
+import { ProjectStatus } from '../types/project';
 import { CURRENCY_SYMBOLS } from '../types';
 import { LanguageSelector } from '../components/General';
 
@@ -59,6 +60,21 @@ export default function SharedProjectPage() {
       month: 'long',
       day: 'numeric',
     });
+  };
+
+  const getStatusChip = (status: ProjectStatus) => {
+    switch (status) {
+      case ProjectStatus.PLANNED:
+        return <Chip label={t('project.status.planned')} size="small" color="default" />;
+      case ProjectStatus.IN_PROGRESS:
+        return <Chip label={t('project.status.inProgress')} size="small" color="info" />;
+      case ProjectStatus.FINISHING:
+        return <Chip label={t('project.status.finishing')} size="small" color="warning" />;
+      case ProjectStatus.COMPLETED:
+        return <Chip label={t('project.status.completed')} size="small" color="success" />;
+      default:
+        return <Chip label={status} size="small" color="default" />;
+    }
   };
 
   if (loading) {
@@ -150,9 +166,9 @@ export default function SharedProjectPage() {
         </Toolbar>
       </AppBar>
 
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: 4, gap: 4, display: 'flex', flexDirection: 'column' }}>
         {/* Project Header */}
-        <Paper sx={{ p: 4, mb: 3 }}>
+        <Paper sx={{ p: 4 }}>
           <Stack spacing={3}>
             <Box>
               <Typography variant="h3" gutterBottom fontWeight={600}>
@@ -174,12 +190,20 @@ export default function SharedProjectPage() {
                 label={`${t('shared.createdOn')}: ${formatDate(project.createdAt)}`}
                 variant="outlined"
               />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {getStatusChip(project.status)}
+              </Box>
             </Box>
           </Stack>
         </Paper>
 
         {/* Cost Summary */}
-        <Grid container spacing={3} sx={{ mb: 3 }}>
+        <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 6 }}>
             <Card>
               <CardContent>
@@ -200,6 +224,18 @@ export default function SharedProjectPage() {
                 </Typography>
                 <Typography variant="h5" fontWeight={600}>
                   {formatCurrency(project.finishCost)}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <Card>
+              <CardContent>
+                <Typography color="text.secondary" gutterBottom variant="body2">
+                  Sheet Good Cost
+                </Typography>
+                <Typography variant="h5" fontWeight={600}>
+                  {formatCurrency(project.sheetGoodCost)}
                 </Typography>
               </CardContent>
             </Card>
@@ -251,8 +287,19 @@ export default function SharedProjectPage() {
           </Grid>
         </Grid>
 
+        {project.additionalNotes && (
+          <Paper sx={{ p: 3 }}>
+            <Typography variant="h5" gutterBottom fontWeight={600}>
+              {t('shared.additionalNotes')}
+            </Typography>
+            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
+              {project.additionalNotes}
+            </Typography>
+          </Paper>
+        )}
+
         {/* Materials Breakdown */}
-        <Paper sx={{ p: 3, mb: 3 }}>
+        <Paper sx={{ p: 3 }}>
           <Typography variant="h5" gutterBottom fontWeight={600}>
             {t('shared.materials')}
           </Typography>
@@ -299,7 +346,7 @@ export default function SharedProjectPage() {
 
         {/* Finishes */}
         {project.finishes && project.finishes.length > 0 && (
-          <Paper sx={{ p: 3, mb: 3 }}>
+          <Paper sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom fontWeight={600}>
               {t('shared.finishes')}
             </Typography>
@@ -349,15 +396,65 @@ export default function SharedProjectPage() {
           </Paper>
         )}
 
-        {/* Additional Notes */}
-        {project.additionalNotes && (
+        {/* Sheet Goods */}
+        {project.projectSheetGoods && project.projectSheetGoods.length > 0 && (
           <Paper sx={{ p: 3 }}>
             <Typography variant="h5" gutterBottom fontWeight={600}>
-              {t('shared.additionalNotes')}
+              Sheet Goods
             </Typography>
-            <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
-              {project.additionalNotes}
-            </Typography>
+            <Grid container spacing={2}>
+              {project.projectSheetGoods.map((projectSheetGood) => {
+                const sheetGood = projectSheetGood.sheetGood;
+                if (!sheetGood) return null;
+
+                return (
+                  <Grid size={12} key={projectSheetGood.id}>
+                    <Card variant="outlined">
+                      <CardContent>
+                        <Stack spacing={1.5}>
+                          <Box>
+                            <Typography variant="h6" gutterBottom>
+                              {sheetGood.name} <Chip label={`Qty: ${projectSheetGood.quantity}`} size="small" sx={{ ml: 1 }} />
+                            </Typography>
+                            {sheetGood.description && (
+                              <Typography variant="body2" color="text.secondary" paragraph>
+                                {sheetGood.description}
+                              </Typography>
+                            )}
+                          </Box>
+                          <Box>
+                            <Typography variant="body2" color="text.secondary">
+                              Dimensions: {sheetGood.width}" × {sheetGood.length}" × {sheetGood.thickness}"
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              Material: {sheetGood.materialType}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Box>
+                              <Typography variant="body2" color="text.secondary">
+                                Unit Price
+                              </Typography>
+                              <Typography variant="body1" fontWeight={600}>
+                                {formatCurrency(sheetGood.price)}
+                              </Typography>
+                            </Box>
+                            <Box sx={{ textAlign: 'right' }}>
+                              <Typography variant="body2" color="text.secondary">
+                                Total Cost
+                              </Typography>
+                              <Typography variant="h6" color="primary" fontWeight={700}>
+                                {formatCurrency(sheetGood.price * projectSheetGood.quantity)}
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </Stack>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                );
+              })}
+            </Grid>
           </Paper>
         )}
       </Container>

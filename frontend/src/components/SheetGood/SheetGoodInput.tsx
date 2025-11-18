@@ -15,40 +15,35 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import type { CreateBoardInput } from '../../types/project';
-import type { Lumber } from '../../types/lumber';
-import { calculateBoardFootage } from '../../types/project';
+import type { CreateProjectSheetGoodInput } from '../../types/project';
+import type { SheetGood } from '../../types/sheetGood';
 
-interface BoardInputProps {
-  board: CreateBoardInput;
+interface SheetGoodInputProps {
+  projectSheetGood: CreateProjectSheetGoodInput;
   index: number;
-  lumberOptions: Lumber[];
-  onChange: (index: number, board: CreateBoardInput) => void;
+  sheetGoodOptions: SheetGood[];
+  onChange: (index: number, projectSheetGood: CreateProjectSheetGoodInput) => void;
   onRemove: (index: number) => void;
 }
 
-export default function BoardInput({
-  board,
+export default function SheetGoodInput({
+  projectSheetGood,
   index,
-  lumberOptions,
+  sheetGoodOptions,
   onChange,
   onRemove,
-}: BoardInputProps) {
+}: SheetGoodInputProps) {
   const { t } = useTranslation();
-  const handleFieldChange = (field: keyof CreateBoardInput, value: string | number) => {
-    onChange(index, { ...board, [field]: value });
+
+  const handleFieldChange = (field: keyof CreateProjectSheetGoodInput, value: string | number) => {
+    onChange(index, { ...projectSheetGood, [field]: value });
   };
 
-  const selectedLumber = lumberOptions.find((l) => l.id === board.lumberId);
-  const boardFootage = calculateBoardFootage({
-    id: '',
-    ...board,
-    boardFeet: 0,
-  });
-  const materialCost = selectedLumber ? boardFootage * selectedLumber.costPerBoardFoot : 0;
+  const selectedSheetGood = sheetGoodOptions.find((sg) => sg.id === projectSheetGood.sheetGoodId);
+  const totalCost = selectedSheetGood ? selectedSheetGood.price * projectSheetGood.quantity : 0;
 
-  const handleBoardLumberChange = (lumberId: string) => {
-    onChange(index, { ...board, lumberId });
+  const handleSheetGoodChange = (sheetGoodId: string) => {
+    onChange(index, { ...projectSheetGood, sheetGoodId });
   };
 
   return (
@@ -85,20 +80,12 @@ export default function BoardInput({
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
-              {t('boardInput.board')} #{index + 1}
+              Sheet Good #{index + 1}
             </Typography>
-            {selectedLumber && (
+            {selectedSheetGood && (
               <Typography variant="body2" color="text.secondary">
-                {selectedLumber.name}
-                {board.width > 0 &&
-                  board.thickness > 0 &&
-                  board.length > 0 &&
-                  board.quantity > 0 && (
-                    <>
-                      {' '}
-                      • {board.width}" × {board.thickness}" × {board.length}v × {board.quantity}
-                    </>
-                  )}
+                {selectedSheetGood.name}
+                {projectSheetGood.quantity > 0 && <> • Qty: {projectSheetGood.quantity}</>}
               </Typography>
             )}
           </Box>
@@ -121,59 +108,28 @@ export default function BoardInput({
       </AccordionSummary>
       <AccordionDetails sx={{ p: 3, pt: 2 }}>
         <Stack spacing={2.5}>
-          {/* Lumber Selection */}
+          {/* Sheet Good Selection */}
           <FormControl fullWidth required>
-            <InputLabel>{t('boardInput.woodSpecies')}</InputLabel>
+            <InputLabel>Sheet Good</InputLabel>
             <Select
-              value={board.lumberId || ''}
-              label={t('boardInput.woodSpecies')}
-              onChange={(e) => handleBoardLumberChange(e.target.value)}
+              value={projectSheetGood.sheetGoodId || ''}
+              label="Sheet Good"
+              onChange={(e) => handleSheetGoodChange(e.target.value)}
             >
-              {lumberOptions.map((lumber) => (
-                <MenuItem key={lumber.id} value={lumber.id}>
-                  {lumber.name} - ₡{lumber.costPerBoardFoot.toFixed(2)}/BF
+              {sheetGoodOptions.map((sheetGood) => (
+                <MenuItem key={sheetGood.id} value={sheetGood.id}>
+                  {sheetGood.name} ({sheetGood.width}"×{sheetGood.length}"×{sheetGood.thickness}") -
+                  ₡{sheetGood.price.toFixed(2)}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
 
-          {/* Dimensions */}
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-            <TextField
-              label={t('boardInput.widthInches')}
-              type="number"
-              value={board.width || ''}
-              onChange={(e) => handleFieldChange('width', parseFloat(e.target.value) || 0)}
-              inputProps={{ step: '0.125', min: '0' }}
-              fullWidth
-              required
-            />
-            <TextField
-              label={t('boardInput.thicknessInches')}
-              type="number"
-              value={board.thickness || ''}
-              onChange={(e) => handleFieldChange('thickness', parseFloat(e.target.value) || 0)}
-              inputProps={{ step: '0.125', min: '0' }}
-              fullWidth
-              required
-            />
-            <TextField
-              label={t('boardInput.lengthVaras')}
-              type="number"
-              value={board.length || ''}
-              onChange={(e) => handleFieldChange('length', parseFloat(e.target.value) || 0)}
-              inputProps={{ step: '0.25', min: '0' }}
-              fullWidth
-              required
-              helperText={t('boardInput.varaHelper')}
-            />
-          </Stack>
-
           {/* Quantity */}
           <TextField
             label={t('boardInput.quantity')}
             type="number"
-            value={board.quantity || ''}
+            value={projectSheetGood.quantity || ''}
             onChange={(e) => handleFieldChange('quantity', parseInt(e.target.value) || 0)}
             inputProps={{ step: '1', min: '1' }}
             fullWidth
@@ -181,7 +137,7 @@ export default function BoardInput({
           />
 
           {/* Calculations Display */}
-          {board.width && board.thickness && board.length && board.quantity && selectedLumber ? (
+          {selectedSheetGood && projectSheetGood.quantity > 0 && (
             <Box
               sx={{
                 p: 2,
@@ -194,23 +150,23 @@ export default function BoardInput({
               <Stack spacing={1}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
-                    {t('boardInput.boardFeetTotal')}
+                    Material Type
                   </Typography>
-                  <Typography variant="body2" fontWeight={600} color="primary.main">
-                    {boardFootage.toFixed(2)} BF
+                  <Typography variant="body2" fontWeight={600} color="text.primary">
+                    {selectedSheetGood.materialType}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                   <Typography variant="body2" color="text.secondary">
-                    {t('boardInput.materialCost')}
+                    Total Cost
                   </Typography>
                   <Typography variant="body2" fontWeight={600} color="success.main">
-                    ₡{materialCost.toFixed(2)}
+                    ₡{totalCost.toFixed(2)}
                   </Typography>
                 </Box>
               </Stack>
             </Box>
-          ) : null}
+          )}
         </Stack>
       </AccordionDetails>
     </Accordion>

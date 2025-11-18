@@ -4,6 +4,14 @@ export const typeDefs = gql`
   # Scalar for DateTime
   scalar DateTime
 
+  # Enums
+  enum ProjectStatus {
+    PLANNED
+    IN_PROGRESS
+    FINISHING
+    COMPLETED
+  }
+
   # User Type
   type User {
     id: ID!
@@ -52,6 +60,22 @@ export const typeDefs = gql`
     updatedAt: DateTime!
   }
 
+  # SheetGood Type
+  type SheetGood {
+    id: ID!
+    name: String!
+    description: String!
+    width: Float!
+    length: Float!
+    thickness: Float!
+    price: Float!
+    materialType: String!
+    tags: [String!]!
+    isDeleted: Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   # Tool Type
   type Tool {
     id: ID!
@@ -80,13 +104,26 @@ export const typeDefs = gql`
     updatedAt: DateTime!
   }
 
+  # ProjectSheetGood Type
+  type ProjectSheetGood {
+    id: ID!
+    quantity: Int!
+    sheetGood: SheetGood!
+    sheetGoodId: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   # Project Type
   type Project {
     id: ID!
     name: String!
     description: String!
+    status: ProjectStatus!
     boards: [Board!]!
     finishes: [Finish!]!
+    projectSheetGoods: [ProjectSheetGood!]!
+    sheetGoodsCost: Float!
     laborCost: Float!
     miscCost: Float!
     additionalNotes: String
@@ -104,8 +141,11 @@ export const typeDefs = gql`
     id: ID!
     name: String!
     description: String!
+    status: ProjectStatus!
     boards: [Board!]!
     finishes: [Finish!]!
+    projectSheetGoods: [ProjectSheetGood!]!
+    sheetGoodsCost: Float!
     laborCost: Float!
     miscCost: Float!
     additionalNotes: String
@@ -134,6 +174,7 @@ export const typeDefs = gql`
     totalProjects: Int!
     totalLumber: Int!
     totalFinishes: Int!
+    totalSheetGoods: Int!
     totalTools: Int!
     totalProjectCost: Float!
     totalBoardFeet: Float!
@@ -178,6 +219,29 @@ export const typeDefs = gql`
     imageData: String
   }
 
+  # Input Types for SheetGood
+  input CreateSheetGoodInput {
+    name: String!
+    description: String!
+    width: Float!
+    length: Float!
+    thickness: Float!
+    price: Float!
+    materialType: String!
+    tags: [String!]!
+  }
+
+  input UpdateSheetGoodInput {
+    name: String
+    description: String
+    width: Float
+    length: Float
+    thickness: Float
+    price: Float
+    materialType: String
+    tags: [String!]
+  }
+
   # Input Types for Tool
   input CreateToolInput {
     name: String!
@@ -206,12 +270,20 @@ export const typeDefs = gql`
     lumberId: String!
   }
 
+  # Input Types for ProjectSheetGood
+  input ProjectSheetGoodInput {
+    quantity: Int!
+    sheetGoodId: String!
+  }
+
   # Input Types for Project
   input CreateProjectInput {
     name: String!
     description: String!
-    boards: [BoardInput!]!
-    finishIds: [String!]!
+    status: ProjectStatus
+    boards: [BoardInput!]
+    finishIds: [String!]
+    projectSheetGoods: [ProjectSheetGoodInput!]
     laborCost: Float!
     miscCost: Float!
     additionalNotes: String
@@ -220,8 +292,10 @@ export const typeDefs = gql`
   input UpdateProjectInput {
     name: String
     description: String
+    status: ProjectStatus
     boards: [BoardInput!]
     finishIds: [String!]
+    projectSheetGoods: [ProjectSheetGoodInput!]
     laborCost: Float
     miscCost: Float
     additionalNotes: String
@@ -285,6 +359,10 @@ export const typeDefs = gql`
     finishes(includeDeleted: Boolean): [Finish!]!
     finish(id: ID!): Finish
 
+    # SheetGood Queries (Private)
+    sheetGoods(includeDeleted: Boolean): [SheetGood!]!
+    sheetGood(id: ID!): SheetGood
+
     # Tool Queries (Private)
     tools(includeDeleted: Boolean): [Tool!]!
     tool(id: ID!): Tool
@@ -325,6 +403,13 @@ export const typeDefs = gql`
     deleteFinish(id: ID!): Finish!
     restoreFinish(id: ID!): Finish!
     hardDeleteFinish(id: ID!): Boolean!
+
+    # SheetGood Mutations (Private)
+    createSheetGood(input: CreateSheetGoodInput!): SheetGood!
+    updateSheetGood(id: ID!, input: UpdateSheetGoodInput!): SheetGood!
+    deleteSheetGood(id: ID!): SheetGood!
+    restoreSheetGood(id: ID!): SheetGood!
+    hardDeleteSheetGood(id: ID!): Boolean!
 
     # Tool Mutations (Private)
     createTool(input: CreateToolInput!): Tool!

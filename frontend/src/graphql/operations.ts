@@ -162,6 +162,97 @@ export const RESTORE_FINISH = gql`
   }
 `;
 
+// SHEET GOOD OPERATIONS
+export const GET_SHEET_GOODS = gql`
+  query GetSheetGoods($includeDeleted: Boolean) {
+    sheetGoods(includeDeleted: $includeDeleted) {
+      id
+      name
+      description
+      width
+      length
+      thickness
+      price
+      materialType
+      tags
+      isDeleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_SHEET_GOOD = gql`
+  query GetSheetGood($id: ID!) {
+    sheetGood(id: $id) {
+      id
+      name
+      description
+      width
+      length
+      thickness
+      price
+      materialType
+      tags
+      isDeleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const CREATE_SHEET_GOOD = gql`
+  mutation CreateSheetGood($input: CreateSheetGoodInput!) {
+    createSheetGood(input: $input) {
+      id
+      name
+      description
+      width
+      length
+      thickness
+      price
+      materialType
+      tags
+      createdAt
+    }
+  }
+`;
+
+export const UPDATE_SHEET_GOOD = gql`
+  mutation UpdateSheetGood($id: ID!, $input: UpdateSheetGoodInput!) {
+    updateSheetGood(id: $id, input: $input) {
+      id
+      name
+      description
+      width
+      length
+      thickness
+      price
+      materialType
+      tags
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_SHEET_GOOD = gql`
+  mutation DeleteSheetGood($id: ID!) {
+    deleteSheetGood(id: $id) {
+      id
+      isDeleted
+    }
+  }
+`;
+
+export const RESTORE_SHEET_GOOD = gql`
+  mutation RestoreSheetGood($id: ID!) {
+    restoreSheetGood(id: $id) {
+      id
+      isDeleted
+    }
+  }
+`;
+
 // TOOL OPERATIONS
 export const GET_TOOLS = gql`
   query GetTools($includeDeleted: Boolean) {
@@ -252,6 +343,7 @@ export const GET_PROJECTS = gql`
       id
       name
       description
+      status
       boards {
         id
         width
@@ -271,6 +363,22 @@ export const GET_PROJECTS = gql`
         name
         price
       }
+      projectSheetGoods {
+        id
+        quantity
+        sheetGoodId
+        sheetGood {
+          id
+          name
+          description
+          width
+          length
+          thickness
+          price
+          materialType
+          tags
+        }
+      }
       laborCost
       miscCost
       additionalNotes
@@ -278,6 +386,7 @@ export const GET_PROJECTS = gql`
       totalBoardFeet
       materialCost
       finishCost
+      sheetGoodsCost
       totalCost
       createdAt
       updatedAt
@@ -291,6 +400,7 @@ export const GET_PROJECT = gql`
       id
       name
       description
+      status
       boards {
         id
         width
@@ -312,6 +422,22 @@ export const GET_PROJECT = gql`
         price
         imageData
       }
+      projectSheetGoods {
+        id
+        quantity
+        sheetGoodId
+        sheetGood {
+          id
+          name
+          description
+          width
+          length
+          thickness
+          price
+          materialType
+          tags
+        }
+      }
       laborCost
       miscCost
       additionalNotes
@@ -319,6 +445,7 @@ export const GET_PROJECT = gql`
       totalBoardFeet
       materialCost
       finishCost
+      sheetGoodsCost
       totalCost
       createdAt
       updatedAt
@@ -332,6 +459,7 @@ export const GET_SHARED_PROJECT = gql`
       id
       name
       description
+      status
       boards {
         id
         width
@@ -355,12 +483,29 @@ export const GET_SHARED_PROJECT = gql`
         imageData
         description
       }
+      projectSheetGoods {
+        id
+        quantity
+        sheetGoodId
+        sheetGood {
+          id
+          name
+          description
+          width
+          length
+          thickness
+          price
+          materialType
+          tags
+        }
+      }
       laborCost
       miscCost
       additionalNotes
       totalBoardFeet
       materialCost
       finishCost
+      sheetGoodsCost
       totalCost
       createdBy
       currency
@@ -375,6 +520,7 @@ export const CREATE_PROJECT = gql`
       id
       name
       description
+      status
       totalCost
       createdAt
     }
@@ -387,6 +533,7 @@ export const UPDATE_PROJECT = gql`
       id
       name
       description
+      status
       totalCost
       updatedAt
     }
@@ -445,6 +592,7 @@ export const GET_DASHBOARD_STATS = gql`
       totalProjects
       totalLumber
       totalFinishes
+      totalSheetGoods
       totalTools
       totalProjectCost
       totalProfit
