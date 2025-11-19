@@ -77,7 +77,7 @@ export interface SharedProject {
   totalBoardFeet: number;
   materialCost: number;
   finishCost: number;
-  sheetGoodCost: number;
+  sheetGoodsCost: number;
   totalCost: number;
   createdBy: string;
   currency: string;

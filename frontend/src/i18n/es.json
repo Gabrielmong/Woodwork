@@ -326,6 +326,8 @@
     "createdBy": "Creado por",
     "createdOn": "Creado el",
     "materialCost": "Costo de Materiales",
+    "lumberCost": "Costo de Madera",
+    "sheetGoodCost": "Costo de Láminas/Tableros",
     "finishCost": "Costo de Acabados",
     "laborCost": "Costo de Mano de Obra",
     "miscCost": "Costo Varios",
@@ -340,7 +342,11 @@
     "boardFeet": "Pies de Tabla",
     "cost": "Costo",
     "finishes": "Acabados",
-    "additionalNotes": "Notas Adicionales"
+    "additionalNotes": "Notas Adicionales",
+    "sheetGoods": "Láminas y Tableros",
+    "dimensions": "Dimensiones",
+    "material": "Material",
+    "unitPrice": "Precio Unitario"
   },
   "terms": {
     "title": "Términos y Condiciones",

@@ -298,6 +298,8 @@
     "createdBy": "Criado por",
     "createdOn": "Criado em",
     "materialCost": "Custo de Material",
+    "lumberCost": "Custo de Madeira",
+    "sheetGoodCost": "Custo de Chapas/Placas",
     "finishCost": "Custo de Acabamento",
     "laborCost": "Custo de Mão de Obra",
     "miscCost": "Custo Diversos",
@@ -312,7 +314,11 @@
     "boardFeet": "Pés de Tábua",
     "cost": "Custo",
     "finishes": "Acabamentos",
-    "additionalNotes": "Notas Adicionais"
+    "additionalNotes": "Notas Adicionais",
+    "sheetGoods": "Chapas e Placas",
+    "dimensions": "Dimensões",
+    "material": "Material",
+    "unitPrice": "Preço Unitário"
   },
   "terms": {
     "title": "Termos e Condições",

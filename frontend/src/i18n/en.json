@@ -326,6 +326,8 @@
     "createdBy": "Created by",
     "createdOn": "Created on",
     "materialCost": "Material Cost",
+    "lumberCost": "Lumber Cost",
+    "sheetGoodCost": "Sheet Good Cost",
     "finishCost": "Finish Cost",
     "laborCost": "Labor Cost",
     "miscCost": "Miscellaneous Cost",
@@ -340,7 +342,11 @@
     "boardFeet": "Board Feet",
     "cost": "Cost",
     "finishes": "Finishes",
-    "additionalNotes": "Additional Notes"
+    "additionalNotes": "Additional Notes",
+    "sheetGoods": "Sheet Goods",
+    "dimensions": "Dimensions",
+    "material": "Material",
+    "unitPrice": "Unit Price"
   },
   "terms": {
     "title": "Terms and Conditions",
