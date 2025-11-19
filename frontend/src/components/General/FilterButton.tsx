@@ -169,13 +169,15 @@ export function FilterButton({ filterGroups, activeFilters, onFiltersChange }: F
                       }
                       label={
                         <Stack direction="row" spacing={1} alignItems="center">
-                          {option.color && (
+                          {option.color ? (
                             <Chip
                               label={option.label}
                               size="small"
                               color={option.color}
                               sx={{ minWidth: 8 }}
                             />
+                          ) : (
+                            <Typography>{option.label}</Typography>
                           )}
                         </Stack>
                       }
