@@ -43,7 +43,15 @@ export const projectResolvers = {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        // place status 'in progress' projects first, then order by updatedAt descending
+        orderBy: [
+          {
+            status: 'asc',
+          },
+          {
+            updatedAt: 'desc',
+          },
+        ],
       });
     },
 

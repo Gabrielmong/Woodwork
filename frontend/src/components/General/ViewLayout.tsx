@@ -13,6 +13,8 @@ import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { SearchFilterBar, type SortOption } from './SearchFilterBar';
+import type { FilterGroup } from './FilterButton';
 
 export type ViewMode = 'card' | 'table';
 
@@ -30,6 +32,15 @@ interface ViewLayoutProps {
   showDeleted?: boolean;
   onShowDeletedChange?: (show: boolean) => void;
   deletedCount?: number;
+  searchValue?: string;
+  onSearchChange?: (value: string) => void;
+  sortValue?: string;
+  onSortChange?: (value: string) => void;
+  sortOptions?: SortOption[];
+  searchPlaceholder?: string;
+  filterGroups?: FilterGroup[];
+  activeFilters?: Record<string, string[]>;
+  onFiltersChange?: (filters: Record<string, string[]>) => void;
 }
 
 export function ViewLayout({
@@ -46,6 +57,15 @@ export function ViewLayout({
   showDeleted = false,
   onShowDeletedChange,
   deletedCount = 0,
+  searchValue = '',
+  onSearchChange,
+  sortValue = '',
+  onSortChange,
+  sortOptions = [],
+  searchPlaceholder,
+  filterGroups = [],
+  activeFilters = {},
+  onFiltersChange,
 }: ViewLayoutProps) {
   const [viewMode, setViewMode] = useState<ViewMode>(defaultView);
 
@@ -185,13 +205,13 @@ export function ViewLayout({
             startIcon={<AddIcon />}
             onClick={onAddClick}
             sx={{
-              background: 'linear-gradient(135deg, #635BFF 0%, #7A73FF 100%)',
+              background: 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)',
               px: { xs: 3, md: 4 },
               py: { xs: 1.5, md: 2 },
               fontSize: { xs: '0.9375rem', md: '1rem' },
               minWidth: { xs: isEmpty ? '100%' : 'auto', sm: 'auto' },
               '&:hover': {
-                background: 'linear-gradient(135deg, #4D47CC 0%, #635BFF 100%)',
+                background: 'linear-gradient(135deg, #3B82F6 0%, #3B82F6 100%)',
               },
             }}
           >
@@ -252,7 +272,22 @@ export function ViewLayout({
           </Button>
         </Box>
       ) : (
-        <Box>{viewMode === 'card' ? cardView : tableView}</Box>
+        <>
+          {onSearchChange && onSortChange && sortOptions.length > 0 && (
+            <SearchFilterBar
+              searchValue={searchValue}
+              onSearchChange={onSearchChange}
+              sortValue={sortValue}
+              onSortChange={onSortChange}
+              sortOptions={sortOptions}
+              searchPlaceholder={searchPlaceholder}
+              filterGroups={filterGroups}
+              activeFilters={activeFilters}
+              onFiltersChange={onFiltersChange}
+            />
+          )}
+          <Box>{viewMode === 'card' ? cardView : tableView}</Box>
+        </>
       )}
     </Box>
   );

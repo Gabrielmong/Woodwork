@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import {
@@ -23,6 +23,11 @@ export function SheetGoodTab() {
   const [showDeleted, setShowDeleted] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [sheetGoodToDelete, setSheetGoodToDelete] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [sortValue, setSortValue] = useState('name-asc');
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({
+    materialType: [],
+  });
   const { t } = useTranslation();
 
   const { data, loading, error } = useQuery(GET_SHEET_GOODS, {
@@ -49,6 +54,98 @@ export function SheetGoodTab() {
   const activeSheetGoods = allSheetGoods.filter((item: SheetGood) => !item.isDeleted);
   const deletedSheetGoods = allSheetGoods.filter((item: SheetGood) => item.isDeleted);
   const displayedSheetGoods = showDeleted ? allSheetGoods : activeSheetGoods;
+
+  const sortOptions = [
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'materialType-asc', label: 'Material Type (A-Z)' },
+    { value: 'materialType-desc', label: 'Material Type (Z-A)' },
+    { value: 'price-asc', label: 'Price (Low to High)' },
+    { value: 'price-desc', label: 'Price (High to Low)' },
+    { value: 'width-asc', label: 'Width (Small to Large)' },
+    { value: 'width-desc', label: 'Width (Large to Small)' },
+  ];
+
+  // Extract unique material types for filtering
+  const uniqueMaterialTypes = useMemo(() => {
+    const types = new Set<string>();
+    displayedSheetGoods.forEach((sg: SheetGood) => {
+      if (sg.materialType) types.add(sg.materialType);
+    });
+    return Array.from(types).sort();
+  }, [displayedSheetGoods]);
+
+  const filterGroups = useMemo(
+    () => [
+      {
+        id: 'materialType',
+        label: 'Material Type',
+        options: uniqueMaterialTypes.map((type) => ({
+          value: type,
+          label: type,
+        })),
+      },
+    ],
+    [uniqueMaterialTypes]
+  );
+
+  const filteredAndSortedSheetGoods = useMemo(() => {
+    let filtered = [...displayedSheetGoods];
+
+    // Apply search filter
+    if (searchValue) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(
+        (sheetGood) =>
+          sheetGood.name.toLowerCase().includes(searchLower) ||
+          (sheetGood.description && sheetGood.description.toLowerCase().includes(searchLower)) ||
+          (sheetGood.materialType && sheetGood.materialType.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply material type filter
+    if (activeFilters.materialType && activeFilters.materialType.length > 0) {
+      filtered = filtered.filter((sheetGood) =>
+        activeFilters.materialType.includes(sheetGood.materialType)
+      );
+    }
+
+    // Apply sorting
+    const [field, direction] = sortValue.split('-');
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (field) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'materialType':
+          aValue = (a.materialType || '').toLowerCase();
+          bValue = (b.materialType || '').toLowerCase();
+          break;
+        case 'price':
+          aValue = a.price || 0;
+          bValue = b.price || 0;
+          break;
+        case 'width':
+          aValue = a.width || 0;
+          bValue = b.width || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (direction === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
+    });
+
+    return filtered;
+  }, [displayedSheetGoods, searchValue, sortValue, activeFilters]);
 
   // Check for query param to auto-open form
   useEffect(() => {
@@ -158,9 +255,18 @@ export function SheetGoodTab() {
         showDeleted={showDeleted}
         onShowDeletedChange={setShowDeleted}
         deletedCount={deletedSheetGoods.length}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+        sortOptions={sortOptions}
+        searchPlaceholder="Search sheet goods by name, description, or material type..."
+        filterGroups={filterGroups}
+        activeFilters={activeFilters}
+        onFiltersChange={setActiveFilters}
         cardView={
           <SheetGoodList
-            sheetGoods={displayedSheetGoods}
+            sheetGoods={filteredAndSortedSheetGoods}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
@@ -168,7 +274,7 @@ export function SheetGoodTab() {
         }
         tableView={
           <SheetGoodTable
-            sheetGoods={displayedSheetGoods}
+            sheetGoods={filteredAndSortedSheetGoods}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}

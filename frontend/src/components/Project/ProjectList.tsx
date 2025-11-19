@@ -117,7 +117,7 @@ export function ProjectList({
         const totalBoardFootage = calculateTotalBoardFootage(project.boards || []);
 
         return (
-          <Grid size={{ xs: 12, lg: 6 }} key={project.id}>
+          <Grid size={{ xs: 12, lg: 4 }} key={project.id}>
             <Card
               onClick={() => navigate(`/app/projects/${project.id}`)}
               sx={{

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import {
@@ -23,6 +23,8 @@ export default function LumberTab() {
   const [showDeleted, setShowDeleted] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [lumberToDelete, setLumberToDelete] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [sortValue, setSortValue] = useState('name-asc');
   const { t } = useTranslation();
 
   const { data, loading, error } = useQuery(GET_LUMBERS, {
@@ -49,6 +51,61 @@ export default function LumberTab() {
   const activeLumber = allLumber.filter((item: Lumber) => !item.isDeleted);
   const deletedLumber = allLumber.filter((item: Lumber) => item.isDeleted);
   const displayedLumber = showDeleted ? allLumber : activeLumber;
+
+  const sortOptions = [
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'costPerBoardFoot-asc', label: 'Cost (Low to High)' },
+    { value: 'costPerBoardFoot-desc', label: 'Cost (High to Low)' },
+    { value: 'jankaRating-asc', label: 'Janka Rating (Low to High)' },
+    { value: 'jankaRating-desc', label: 'Janka Rating (High to Low)' },
+  ];
+
+  const filteredAndSortedLumber = useMemo(() => {
+    let filtered = [...displayedLumber];
+
+    // Apply search filter
+    if (searchValue) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(
+        (lumber) =>
+          lumber.name.toLowerCase().includes(searchLower) ||
+          (lumber.description && lumber.description.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply sorting
+    const [field, direction] = sortValue.split('-');
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (field) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'costPerBoardFoot':
+          aValue = a.costPerBoardFoot || 0;
+          bValue = b.costPerBoardFoot || 0;
+          break;
+        case 'jankaRating':
+          aValue = a.jankaRating || 0;
+          bValue = b.jankaRating || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (direction === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
+    });
+
+    return filtered;
+  }, [displayedLumber, searchValue, sortValue]);
 
   // Check for query param to auto-open form
   useEffect(() => {
@@ -158,9 +215,15 @@ export default function LumberTab() {
         showDeleted={showDeleted}
         onShowDeletedChange={setShowDeleted}
         deletedCount={deletedLumber.length}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+        sortOptions={sortOptions}
+        searchPlaceholder="Search lumber by name or description..."
         cardView={
           <LumberList
-            lumber={displayedLumber}
+            lumber={filteredAndSortedLumber}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
@@ -168,7 +231,7 @@ export default function LumberTab() {
         }
         tableView={
           <LumberTable
-            lumber={displayedLumber}
+            lumber={filteredAndSortedLumber}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}

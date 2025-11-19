@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import {
@@ -24,6 +24,8 @@ export function ToolTab() {
   const [showDeleted, setShowDeleted] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [toolToDelete, setToolToDelete] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [sortValue, setSortValue] = useState('name-asc');
 
   const { data, loading, error } = useQuery(GET_TOOLS, {
     variables: { includeDeleted: showDeleted },
@@ -49,6 +51,63 @@ export function ToolTab() {
   const activeTools = allTools.filter((item: Tool) => !item.isDeleted);
   const deletedTools = allTools.filter((item: Tool) => item.isDeleted);
   const displayedTools = showDeleted ? allTools : activeTools;
+
+  const sortOptions = [
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'function-asc', label: 'Function (A-Z)' },
+    { value: 'function-desc', label: 'Function (Z-A)' },
+    { value: 'price-asc', label: 'Price (Low to High)' },
+    { value: 'price-desc', label: 'Price (High to Low)' },
+  ];
+
+  const filteredAndSortedTools = useMemo(() => {
+    let filtered = [...displayedTools];
+
+    // Apply search filter
+    if (searchValue) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(
+        (tool) =>
+          tool.name.toLowerCase().includes(searchLower) ||
+          (tool.description && tool.description.toLowerCase().includes(searchLower)) ||
+          (tool.function && tool.function.toLowerCase().includes(searchLower)) ||
+          (tool.serialNumber && tool.serialNumber.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply sorting
+    const [field, direction] = sortValue.split('-');
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (field) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'function':
+          aValue = (a.function || '').toLowerCase();
+          bValue = (b.function || '').toLowerCase();
+          break;
+        case 'price':
+          aValue = a.price || 0;
+          bValue = b.price || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (direction === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
+    });
+
+    return filtered;
+  }, [displayedTools, searchValue, sortValue]);
 
   // Check for query param to auto-open form
   useEffect(() => {
@@ -158,9 +217,15 @@ export function ToolTab() {
         showDeleted={showDeleted}
         onShowDeletedChange={setShowDeleted}
         deletedCount={deletedTools.length}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+        sortOptions={sortOptions}
+        searchPlaceholder="Search tools by name, description, function, or serial number..."
         cardView={
           <ToolList
-            tools={displayedTools}
+            tools={filteredAndSortedTools}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
@@ -168,7 +233,7 @@ export function ToolTab() {
         }
         tableView={
           <ToolTable
-            tools={displayedTools}
+            tools={filteredAndSortedTools}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}

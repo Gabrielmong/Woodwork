@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import {
@@ -23,6 +23,8 @@ export function FinishTab() {
   const [showDeleted, setShowDeleted] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [finishToDelete, setFinishToDelete] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [sortValue, setSortValue] = useState('name-asc');
   const { t } = useTranslation();
 
   const { data, loading, error } = useQuery(GET_FINISHES, {
@@ -49,6 +51,55 @@ export function FinishTab() {
   const activeFinishes = allFinishes.filter((item: Finish) => !item.isDeleted);
   const deletedFinishes = allFinishes.filter((item: Finish) => item.isDeleted);
   const displayedFinishes = showDeleted ? allFinishes : activeFinishes;
+
+  const sortOptions = [
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'price-asc', label: 'Price (Low to High)' },
+    { value: 'price-desc', label: 'Price (High to Low)' },
+  ];
+
+  const filteredAndSortedFinishes = useMemo(() => {
+    let filtered = [...displayedFinishes];
+
+    // Apply search filter
+    if (searchValue) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(
+        (finish) =>
+          finish.name.toLowerCase().includes(searchLower) ||
+          (finish.description && finish.description.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply sorting
+    const [field, direction] = sortValue.split('-');
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (field) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'price':
+          aValue = a.price || 0;
+          bValue = b.price || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (direction === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
+    });
+
+    return filtered;
+  }, [displayedFinishes, searchValue, sortValue]);
 
   // Check for query param to auto-open form
   useEffect(() => {
@@ -158,9 +209,15 @@ export function FinishTab() {
         showDeleted={showDeleted}
         onShowDeletedChange={setShowDeleted}
         deletedCount={deletedFinishes.length}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+        sortOptions={sortOptions}
+        searchPlaceholder="Search finishes by name or description..."
         cardView={
           <FinishList
-            finishes={displayedFinishes}
+            finishes={filteredAndSortedFinishes}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
@@ -168,7 +225,7 @@ export function FinishTab() {
         }
         tableView={
           <FinishTable
-            finishes={displayedFinishes}
+            finishes={filteredAndSortedFinishes}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}

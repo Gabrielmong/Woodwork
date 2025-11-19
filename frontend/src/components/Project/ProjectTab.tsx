@@ -26,6 +26,9 @@ export function ProjectTab() {
   const [showDeleted, setShowDeleted] = useState(false);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [sortValue, setSortValue] = useState('name-asc');
+  const [activeFilters, setActiveFilters] = useState<Record<string, string[]>>({ status: [] });
 
   const {
     data: projectsData,
@@ -73,6 +76,85 @@ export function ProjectTab() {
   const deletedProjects = allProjects.filter((item: Project) => item.isDeleted);
 
   const displayedProjects = showDeleted ? allProjects : activeProjects;
+
+  const sortOptions = [
+    { value: 'name-asc', label: 'Name (A-Z)' },
+    { value: 'name-desc', label: 'Name (Z-A)' },
+    { value: 'totalCost-asc', label: 'Cost (Low to High)' },
+    { value: 'totalCost-desc', label: 'Cost (High to Low)' },
+    { value: 'boardCount-asc', label: 'Board Count (Low to High)' },
+    { value: 'boardCount-desc', label: 'Board Count (High to Low)' },
+    { value: 'totalBoardFeet-asc', label: 'Board Feet (Low to High)' },
+    { value: 'totalBoardFeet-desc', label: 'Board Feet (High to Low)' },
+  ];
+
+  const filterGroups = [
+    {
+      id: 'status',
+      label: 'Project Status',
+      options: [
+        { value: ProjectStatus.PLANNED, label: 'Planned', color: 'default' as const },
+        { value: ProjectStatus.IN_PROGRESS, label: 'In Progress', color: 'info' as const },
+        { value: ProjectStatus.FINISHING, label: 'Finishing', color: 'warning' as const },
+        { value: ProjectStatus.COMPLETED, label: 'Completed', color: 'success' as const },
+      ],
+    },
+  ];
+
+  const filteredAndSortedProjects = useMemo(() => {
+    let filtered = [...displayedProjects];
+
+    // Apply search filter
+    if (searchValue) {
+      const searchLower = searchValue.toLowerCase();
+      filtered = filtered.filter(
+        (project) =>
+          project.name.toLowerCase().includes(searchLower) ||
+          (project.description && project.description.toLowerCase().includes(searchLower))
+      );
+    }
+
+    // Apply status filter
+    if (activeFilters.status && activeFilters.status.length > 0) {
+      filtered = filtered.filter((project) => activeFilters.status.includes(project.status));
+    }
+
+    // Apply sorting
+    const [field, direction] = sortValue.split('-');
+    filtered.sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (field) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'totalCost':
+          aValue = a.totalCost || 0;
+          bValue = b.totalCost || 0;
+          break;
+        case 'boardCount':
+          aValue = a.boards?.length || 0;
+          bValue = b.boards?.length || 0;
+          break;
+        case 'totalBoardFeet':
+          aValue = a.totalBoardFeet || 0;
+          bValue = b.totalBoardFeet || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (direction === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
+    });
+
+    return filtered;
+  }, [displayedProjects, searchValue, sortValue, activeFilters]);
 
   // Check for query param to auto-open form
   useEffect(() => {
@@ -197,9 +279,18 @@ export function ProjectTab() {
         showDeleted={showDeleted}
         onShowDeletedChange={setShowDeleted}
         deletedCount={deletedProjects.length}
+        searchValue={searchValue}
+        onSearchChange={setSearchValue}
+        sortValue={sortValue}
+        onSortChange={setSortValue}
+        sortOptions={sortOptions}
+        searchPlaceholder="Search projects by name or description..."
+        filterGroups={filterGroups}
+        activeFilters={activeFilters}
+        onFiltersChange={setActiveFilters}
         cardView={
           <ProjectList
-            projects={displayedProjects}
+            projects={filteredAndSortedProjects}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
@@ -208,7 +299,7 @@ export function ProjectTab() {
         }
         tableView={
           <ProjectTable
-            projects={displayedProjects}
+            projects={filteredAndSortedProjects}
             onEdit={handleEditClick}
             onDelete={handleDelete}
             onRestore={handleRestore}
