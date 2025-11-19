@@ -19,6 +19,8 @@ export const dashboardResolvers = {
     dashboardStats: async (_: any, __: any, context: any) => {
       const user = requireAuth(context);
 
+      // Get all active projects with their boards and finishes
+      // Active projects are those that are not deleted and not completed
       const allProjects = await prisma.project.findMany({
         where: {
           userId: user.userId,
@@ -34,8 +36,11 @@ export const dashboardResolvers = {
         },
       });
 
+      // Filter out completed projects
+      const projects = allProjects.filter((project) => project.status !== 'COMPLETED');
+
       // Get counts
-      const totalProjects = allProjects.length;
+      const totalProjects = projects.length;
       const totalLumber = await prisma.lumber.count({
         where: {
           userId: user.userId,
