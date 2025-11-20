@@ -14,6 +14,7 @@ import ShareIcon from '@mui/icons-material/Share';
 import type { Project, ProjectSheetGood } from '../../types/project';
 import type { Finish } from '../../types/finish';
 import { calculateTotalBoardFootage, ProjectStatus } from '../../types/project';
+import { StatusChip } from './utils';
 
 const truncateText = (text: string, maxLength: number = 150) => {
   if (text.length <= maxLength) return text;
@@ -28,7 +29,13 @@ interface ProjectTableProps {
   onStatusChange?: (projectId: string, newStatus: ProjectStatus) => void;
 }
 
-export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusChange }: ProjectTableProps) {
+export function ProjectTable({
+  projects,
+  onEdit,
+  onDelete,
+  onRestore,
+  onStatusChange,
+}: ProjectTableProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -41,25 +48,11 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusCh
     }
   };
 
-  const getStatusChip = (status: ProjectStatus) => {
-    switch (status) {
-      case ProjectStatus.PLANNED:
-        return <Chip label={t('project.status.planned')} size="small" color="default" sx={{ height: 24 }} />;
-      case ProjectStatus.IN_PROGRESS:
-        return <Chip label={t('project.status.inProgress')} size="small" color="info" sx={{ height: 24 }} />;
-      case ProjectStatus.FINISHING:
-        return <Chip label={t('project.status.finishing')} size="small" color="warning" sx={{ height: 24 }} />;
-      case ProjectStatus.COMPLETED:
-        return <Chip label={t('project.status.completed')} size="small" color="success" sx={{ height: 24 }} />;
-      default:
-        return <Chip label={status} size="small" color="default" sx={{ height: 24 }} />;
-    }
-  };
-
   const calculateProjectCost = (project: Project) => {
     const boards = project.boards || [];
     const finishes = project.finishes || [];
     const projectSheetGoods = project.projectSheetGoods || [];
+    const projectConsumables = project.projectConsumables || [];
 
     const materialCost = boards.reduce((total, board) => {
       const lumber = board.lumber;
@@ -75,14 +68,28 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusCh
     }, 0);
 
     const sheetGoodCost = projectSheetGoods.reduce((total, projectSheetGood) => {
-      return total + ((projectSheetGood.sheetGood?.price || 0) * projectSheetGood.quantity);
+      return total + (projectSheetGood.sheetGood?.price || 0) * projectSheetGood.quantity;
+    }, 0);
+
+    const consumableCost = projectConsumables.reduce((total, projectConsumable) => {
+      const consumable = projectConsumable.consumable;
+      if (!consumable) return total;
+      const unitPrice = consumable.price / consumable.packageQuantity;
+      return total + projectConsumable.quantity * unitPrice;
     }, 0);
 
     return {
       materialCost,
       finishCost,
       sheetGoodCost,
-      totalCost: materialCost + finishCost + sheetGoodCost + (project?.laborCost || 0) + (project?.miscCost || 0),
+      consumableCost,
+      totalCost:
+        materialCost +
+        finishCost +
+        sheetGoodCost +
+        consumableCost +
+        (project?.laborCost || 0) +
+        (project?.miscCost || 0),
     };
   };
 
@@ -165,7 +172,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusCh
     },
     {
       field: 'projectSheetGoods',
-      headerName: 'Sheet Goods',
+      headerName: t('projects.sheetGoodsHeader'),
       flex: 1,
       minWidth: 150,
       sortable: false,
@@ -177,6 +184,36 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusCh
                 <Chip
                   key={projectSheetGood.id}
                   label={`${projectSheetGood.sheetGood?.name || t('common.unknown')} (${projectSheetGood.quantity})`}
+                  size="small"
+                  sx={{
+                    bgcolor: 'background.default',
+                    fontWeight: 500,
+                    fontSize: '0.75rem',
+                    height: '24px',
+                  }}
+                />
+              );
+            })
+          ) : (
+            <Box sx={{ color: 'text.disabled', fontSize: '0.875rem' }}>—</Box>
+          )}
+        </Stack>
+      ),
+    },
+    {
+      field: 'projectConsumables',
+      headerName: t('projects.consumablesHeader'),
+      flex: 1,
+      minWidth: 150,
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <Stack direction="row" spacing={0.5} flexWrap="wrap" gap={0.5} sx={{ py: 0.5 }}>
+          {params.value && params.value.length > 0 ? (
+            params.value.map((projectConsumable: any) => {
+              return (
+                <Chip
+                  key={projectConsumable.id}
+                  label={`${projectConsumable.consumable?.name || t('common.unknown')} (${projectConsumable.quantity} ${t('projects.itemsSuffix')})`}
                   size="small"
                   sx={{
                     bgcolor: 'background.default',
@@ -211,7 +248,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusCh
       renderCell: (params: GridRenderCellParams) => {
         const project = params.row as Project;
         if (project.isDeleted || !onStatusChange) {
-          return getStatusChip(params.value as ProjectStatus);
+          return <StatusChip status={params.value as ProjectStatus} />;
         }
         return (
           <FormControl size="small" fullWidth onClick={(e) => e.stopPropagation()}>
@@ -286,7 +323,7 @@ export function ProjectTable({ projects, onEdit, onDelete, onRestore, onStatusCh
         return [
           <GridActionsCellItem
             icon={<ShareIcon />}
-            label="Share"
+            label={t('projects.share')}
             onClick={() => handleShare(project.id)}
             showInMenu={false}
           />,

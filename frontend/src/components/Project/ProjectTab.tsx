@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import {
@@ -10,6 +11,7 @@ import {
   GET_FINISHES,
   GET_LUMBERS,
   GET_SHEET_GOODS,
+  GET_CONSUMABLES,
 } from '../../graphql/operations';
 import { ProjectList } from './ProjectList';
 import { ProjectTable } from './ProjectTable';
@@ -20,6 +22,7 @@ import { ConfirmDialog, ViewLayout } from '../General';
 import { useQueryParams } from '../../hooks/useQueryParams';
 
 export function ProjectTab() {
+  const { t } = useTranslation();
   const { getParam, removeParam } = useQueryParams();
   const [formOpen, setFormOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
@@ -41,6 +44,7 @@ export function ProjectTab() {
   const { data: finishesData } = useQuery(GET_FINISHES);
   const { data: lumberData } = useQuery(GET_LUMBERS);
   const { data: sheetGoodsData } = useQuery(GET_SHEET_GOODS);
+  const { data: consumablesData } = useQuery(GET_CONSUMABLES);
 
   const activeFinishes = useMemo(() => {
     return (finishesData?.finishes || []).filter((finish: any) => !finish.isDeleted);
@@ -53,6 +57,10 @@ export function ProjectTab() {
   const activeSheetGoods = useMemo(() => {
     return (sheetGoodsData?.sheetGoods || []).filter((sheetGood: any) => !sheetGood.isDeleted);
   }, [sheetGoodsData]);
+
+  const activeConsumables = useMemo(() => {
+    return (consumablesData?.consumables || []).filter((consumable: any) => !consumable.isDeleted);
+  }, [consumablesData]);
 
   const [createProject] = useMutation(CREATE_PROJECT, {
     refetchQueries: [{ query: GET_PROJECTS, variables: { includeDeleted: showDeleted } }],
@@ -78,25 +86,25 @@ export function ProjectTab() {
   const displayedProjects = showDeleted ? allProjects : activeProjects;
 
   const sortOptions = [
-    { value: 'name-asc', label: 'Name (A-Z)' },
-    { value: 'name-desc', label: 'Name (Z-A)' },
-    { value: 'totalCost-asc', label: 'Cost (Low to High)' },
-    { value: 'totalCost-desc', label: 'Cost (High to Low)' },
-    { value: 'boardCount-asc', label: 'Board Count (Low to High)' },
-    { value: 'boardCount-desc', label: 'Board Count (High to Low)' },
-    { value: 'totalBoardFeet-asc', label: 'Board Feet (Low to High)' },
-    { value: 'totalBoardFeet-desc', label: 'Board Feet (High to Low)' },
+    { value: 'name-asc', label: t('projects.sortBy.nameAsc') },
+    { value: 'name-desc', label: t('projects.sortBy.nameDesc') },
+    { value: 'totalCost-asc', label: t('projects.sortBy.costAsc') },
+    { value: 'totalCost-desc', label: t('projects.sortBy.costDesc') },
+    { value: 'boardCount-asc', label: t('projects.sortBy.boardCountAsc') },
+    { value: 'boardCount-desc', label: t('projects.sortBy.boardCountDesc') },
+    { value: 'totalBoardFeet-asc', label: t('projects.sortBy.boardFeetAsc') },
+    { value: 'totalBoardFeet-desc', label: t('projects.sortBy.boardFeetDesc') },
   ];
 
   const filterGroups = [
     {
       id: 'status',
-      label: 'Project Status',
+      label: t('projects.filterBy.projectStatus'),
       options: [
-        { value: ProjectStatus.PLANNED, label: 'Planned', color: 'default' as const },
-        { value: ProjectStatus.IN_PROGRESS, label: 'In Progress', color: 'info' as const },
-        { value: ProjectStatus.FINISHING, label: 'Finishing', color: 'warning' as const },
-        { value: ProjectStatus.COMPLETED, label: 'Completed', color: 'success' as const },
+        { value: ProjectStatus.PLANNED, label: t('project.status.planned'), color: 'default' as const },
+        { value: ProjectStatus.IN_PROGRESS, label: t('project.status.inProgress'), color: 'info' as const },
+        { value: ProjectStatus.FINISHING, label: t('project.status.finishing'), color: 'warning' as const },
+        { value: ProjectStatus.COMPLETED, label: t('project.status.completed'), color: 'success' as const },
       ],
     },
   ];
@@ -269,12 +277,12 @@ export function ProjectTab() {
   return (
     <>
       <ViewLayout
-        title="Projects"
-        subtitle="Plan and estimate your woodworking projects with material and cost calculations"
+        title={t('projects.title')}
+        subtitle={t('projects.subtitle')}
         onAddClick={handleAddClick}
-        addButtonText="New Project"
-        emptyTitle="No projects yet"
-        emptySubtitle="Get started by creating your first project to calculate materials, costs, and plan your woodworking"
+        addButtonText={t('projects.add')}
+        emptyTitle={t('projects.emptyTitle')}
+        emptySubtitle={t('projects.emptySubtitle')}
         isEmpty={activeProjects.length === 0 && !showDeleted}
         showDeleted={showDeleted}
         onShowDeletedChange={setShowDeleted}
@@ -284,7 +292,7 @@ export function ProjectTab() {
         sortValue={sortValue}
         onSortChange={setSortValue}
         sortOptions={sortOptions}
-        searchPlaceholder="Search projects by name or description..."
+        searchPlaceholder={t('projects.searchPlaceholder')}
         filterGroups={filterGroups}
         activeFilters={activeFilters}
         onFiltersChange={setActiveFilters}
@@ -316,14 +324,15 @@ export function ProjectTab() {
         lumberOptions={activeLumber}
         finishOptions={activeFinishes}
         sheetGoodOptions={activeSheetGoods}
+        consumableOptions={activeConsumables}
       />
 
       <ConfirmDialog
         open={deleteConfirmOpen}
-        title="Delete Project"
-        message="Are you sure you want to delete this project? This action will mark it as deleted but can be restored later."
-        confirmText="Delete"
-        cancelText="Cancel"
+        title={t('projects.deleteDialog.title')}
+        message={t('projects.deleteDialog.message')}
+        confirmText={t('projects.deleteDialog.confirm')}
+        cancelText={t('projects.deleteDialog.cancel')}
         severity="error"
         onConfirm={handleDeleteConfirm}
         onCancel={handleDeleteCancel}

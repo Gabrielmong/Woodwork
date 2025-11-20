@@ -94,7 +94,8 @@ export function ToolForm({ open, onClose, onSubmit, editingTool }: ToolFormProps
     onClose();
   };
 
-  const isValid = name.trim() && description.trim() && functionField.trim() && price && !isNaN(parseFloat(price));
+  const isValid =
+    name.trim() && description.trim() && functionField.trim() && price && !isNaN(parseFloat(price));
 
   return (
     <Dialog
@@ -261,13 +262,10 @@ export function ToolForm({ open, onClose, onSubmit, editingTool }: ToolFormProps
           disabled={!isValid}
           variant="contained"
           sx={{
-            textTransform: 'none',
-            fontWeight: 600,
-            borderRadius: 2,
-            px: 3,
-            bgcolor: 'primary.main',
+            background: isValid ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' : undefined,
+            px: 4,
             '&:hover': {
-              bgcolor: 'primary.dark',
+              background: isValid ? 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)' : undefined,
             },
           }}
         >

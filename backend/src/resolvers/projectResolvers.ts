@@ -42,6 +42,11 @@ export const projectResolvers = {
               sheetGood: true,
             },
           },
+          projectConsumables: {
+            include: {
+              consumable: true,
+            },
+          },
         },
         // place status 'in progress' projects first, then order by updatedAt descending
         orderBy: [
@@ -70,6 +75,11 @@ export const projectResolvers = {
               sheetGood: true,
             },
           },
+          projectConsumables: {
+            include: {
+              consumable: true,
+            },
+          },
         },
       });
 
@@ -96,6 +106,11 @@ export const projectResolvers = {
           projectSheetGoods: {
             include: {
               sheetGood: true,
+            },
+          },
+          projectConsumables: {
+            include: {
+              consumable: true,
             },
           },
           user: {
@@ -128,7 +143,7 @@ export const projectResolvers = {
   Mutation: {
     createProject: async (_: any, { input }: any, context: any) => {
       const user = requireAuth(context);
-      const { boards, finishIds, projectSheetGoods, ...projectData } = input;
+      const { boards, finishIds, projectSheetGoods, projectConsumables, ...projectData } = input;
 
       return prisma.project.create({
         data: {
@@ -152,6 +167,12 @@ export const projectResolvers = {
                 create: projectSheetGoods,
               },
             }),
+          ...(projectConsumables &&
+            projectConsumables.length > 0 && {
+              projectConsumables: {
+                create: projectConsumables,
+              },
+            }),
         },
         include: {
           boards: {
@@ -165,12 +186,17 @@ export const projectResolvers = {
               sheetGood: true,
             },
           },
+          projectConsumables: {
+            include: {
+              consumable: true,
+            },
+          },
         },
       });
     },
 
     updateProject: async (_: any, { id, input }: any, context: any) => {
-      const { boards, finishIds, projectSheetGoods, ...projectData } = input;
+      const { boards, finishIds, projectSheetGoods, projectConsumables, ...projectData } = input;
 
       const project = await prisma.project.findUnique({
         where: { id },
@@ -196,6 +222,13 @@ export const projectResolvers = {
         });
       }
 
+      // Delete existing project consumables if they are being updated
+      if (projectConsumables) {
+        await prisma.projectConsumable.deleteMany({
+          where: { projectId: id },
+        });
+      }
+
       return prisma.project.update({
         where: { id },
         data: {
@@ -215,6 +248,11 @@ export const projectResolvers = {
               create: projectSheetGoods,
             },
           }),
+          ...(projectConsumables && {
+            projectConsumables: {
+              create: projectConsumables,
+            },
+          }),
         },
         include: {
           boards: {
@@ -226,6 +264,11 @@ export const projectResolvers = {
           projectSheetGoods: {
             include: {
               sheetGood: true,
+            },
+          },
+          projectConsumables: {
+            include: {
+              consumable: true,
             },
           },
         },
@@ -258,6 +301,11 @@ export const projectResolvers = {
               sheetGood: true,
             },
           },
+          projectConsumables: {
+            include: {
+              consumable: true,
+            },
+          },
         },
       });
     },
@@ -286,6 +334,11 @@ export const projectResolvers = {
           projectSheetGoods: {
             include: {
               sheetGood: true,
+            },
+          },
+          projectConsumables: {
+            include: {
+              consumable: true,
             },
           },
         },
@@ -344,6 +397,13 @@ export const projectResolvers = {
       }, 0);
     },
 
+    consumableCost: (parent: any) => {
+      return parent.projectConsumables.reduce((total: number, projectConsumable: any) => {
+        const unitPrice = projectConsumable.consumable.price / projectConsumable.consumable.packageQuantity;
+        return total + projectConsumable.quantity * unitPrice;
+      }, 0);
+    },
+
     totalCost: (parent: any) => {
       const materialCost = parent.boards.reduce((total: number, board: any) => {
         const boardFeet = calculateBoardFeet(
@@ -366,7 +426,15 @@ export const projectResolvers = {
         0
       );
 
-      return materialCost + finishCost + sheetGoodsCost + parent.laborCost + parent.miscCost;
+      const consumableCost = parent.projectConsumables.reduce(
+        (total: number, projectConsumable: any) => {
+          const unitPrice = projectConsumable.consumable.price / projectConsumable.consumable.packageQuantity;
+          return total + projectConsumable.quantity * unitPrice;
+        },
+        0
+      );
+
+      return materialCost + finishCost + sheetGoodsCost + consumableCost + parent.laborCost + parent.miscCost;
     },
   },
 
@@ -414,10 +482,19 @@ export const projectResolvers = {
       }, 0);
     },
 
+    consumableCost: (parent: any) => {
+      if (!parent.projectConsumables || parent.projectConsumables.length === 0) return 0;
+      return parent.projectConsumables.reduce((total: number, projectConsumable: any) => {
+        const unitPrice = (projectConsumable.consumable?.price || 0) / (projectConsumable.consumable?.packageQuantity || 1);
+        return total + projectConsumable.quantity * unitPrice;
+      }, 0);
+    },
+
     totalCost: (parent: any) => {
       const boards = parent.boards || [];
       const finishes = parent.finishes || [];
       const projectSheetGoods = parent.projectSheetGoods || [];
+      const projectConsumables = parent.projectConsumables || [];
 
       const materialCost = boards.reduce((total: number, board: any) => {
         const boardFeet = calculateBoardFeet(
@@ -437,10 +514,16 @@ export const projectResolvers = {
         return total + (projectSheetGood.sheetGood?.price || 0) * projectSheetGood.quantity;
       }, 0);
 
+      const consumableCost = projectConsumables.reduce((total: number, projectConsumable: any) => {
+        const unitPrice = (projectConsumable.consumable?.price || 0) / (projectConsumable.consumable?.packageQuantity || 1);
+        return total + projectConsumable.quantity * unitPrice;
+      }, 0);
+
       return (
         materialCost +
         finishCost +
         sheetGoodsCost +
+        consumableCost +
         (parent.laborCost || 0) +
         (parent.miscCost || 0)
       );

@@ -27,6 +27,7 @@ model User {
   lumber            Lumber[]
   finishes          Finish[]
   sheetGoods        SheetGood[]
+  consumables       Consumable[]
   projects          Project[]
   tools             Tool[]
   settings          Settings?
@@ -104,6 +105,29 @@ model SheetGood {
   @@map("sheet_goods")
 }
 
+model Consumable {
+  id               String              @id @default(uuid())
+  name             String
+  description      String
+  packageQuantity  Int                 // Number of items per package
+  price            Float               // Price per package
+  tags             String[]
+  storeLink        String?
+  imageData        String?             @db.Text // Base64 encoded image
+  isDeleted        Boolean             @default(false)
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  // Relations
+  userId           String
+  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projectConsumables ProjectConsumable[]
+
+  @@index([userId])
+  @@index([isDeleted])
+  @@map("consumables")
+}
+
 enum ProjectStatus {
   PLANNED
   IN_PROGRESS
@@ -129,6 +153,7 @@ model Project {
   boards            Board[]
   finishes          Finish[]           @relation("ProjectFinishes")
   projectSheetGoods ProjectSheetGood[]
+  projectConsumables ProjectConsumable[]
 
   @@index([userId])
   @@index([isDeleted])
@@ -173,6 +198,24 @@ model ProjectSheetGood {
   @@index([projectId])
   @@index([sheetGoodId])
   @@map("project_sheet_goods")
+}
+
+model ProjectConsumable {
+  id           String     @id @default(uuid())
+  quantity     Int        // Number of items needed (not packages)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relations
+  projectId    String
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  consumableId String
+  consumable   Consumable @relation(fields: [consumableId], references: [id])
+
+  @@index([projectId])
+  @@index([consumableId])
+  @@map("project_consumables")
 }
 
 model Tool {

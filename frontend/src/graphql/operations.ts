@@ -253,6 +253,97 @@ export const RESTORE_SHEET_GOOD = gql`
   }
 `;
 
+// CONSUMABLE OPERATIONS
+export const GET_CONSUMABLES = gql`
+  query GetConsumables($includeDeleted: Boolean) {
+    consumables(includeDeleted: $includeDeleted) {
+      id
+      name
+      description
+      packageQuantity
+      price
+      unitPrice
+      tags
+      storeLink
+      imageData
+      isDeleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_CONSUMABLE = gql`
+  query GetConsumable($id: ID!) {
+    consumable(id: $id) {
+      id
+      name
+      description
+      packageQuantity
+      price
+      unitPrice
+      tags
+      storeLink
+      imageData
+      isDeleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const CREATE_CONSUMABLE = gql`
+  mutation CreateConsumable($input: CreateConsumableInput!) {
+    createConsumable(input: $input) {
+      id
+      name
+      description
+      packageQuantity
+      price
+      unitPrice
+      tags
+      storeLink
+      imageData
+      createdAt
+    }
+  }
+`;
+
+export const UPDATE_CONSUMABLE = gql`
+  mutation UpdateConsumable($id: ID!, $input: UpdateConsumableInput!) {
+    updateConsumable(id: $id, input: $input) {
+      id
+      name
+      description
+      packageQuantity
+      price
+      unitPrice
+      tags
+      storeLink
+      imageData
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_CONSUMABLE = gql`
+  mutation DeleteConsumable($id: ID!) {
+    deleteConsumable(id: $id) {
+      id
+      isDeleted
+    }
+  }
+`;
+
+export const RESTORE_CONSUMABLE = gql`
+  mutation RestoreConsumable($id: ID!) {
+    restoreConsumable(id: $id) {
+      id
+      isDeleted
+    }
+  }
+`;
+
 // TOOL OPERATIONS
 export const GET_TOOLS = gql`
   query GetTools($includeDeleted: Boolean) {
@@ -379,6 +470,20 @@ export const GET_PROJECTS = gql`
           tags
         }
       }
+      projectConsumables {
+        id
+        quantity
+        consumableId
+        consumable {
+          id
+          name
+          description
+          packageQuantity
+          price
+          unitPrice
+          tags
+        }
+      }
       laborCost
       miscCost
       additionalNotes
@@ -387,6 +492,7 @@ export const GET_PROJECTS = gql`
       materialCost
       finishCost
       sheetGoodsCost
+      consumableCost
       totalCost
       createdAt
       updatedAt
@@ -438,6 +544,20 @@ export const GET_PROJECT = gql`
           tags
         }
       }
+      projectConsumables {
+        id
+        quantity
+        consumableId
+        consumable {
+          id
+          name
+          description
+          packageQuantity
+          price
+          unitPrice
+          tags
+        }
+      }
       laborCost
       miscCost
       additionalNotes
@@ -446,6 +566,7 @@ export const GET_PROJECT = gql`
       materialCost
       finishCost
       sheetGoodsCost
+      consumableCost
       totalCost
       createdAt
       updatedAt
@@ -499,6 +620,20 @@ export const GET_SHARED_PROJECT = gql`
           tags
         }
       }
+      projectConsumables {
+        id
+        quantity
+        consumableId
+        consumable {
+          id
+          name
+          description
+          packageQuantity
+          price
+          unitPrice
+          tags
+        }
+      }
       laborCost
       miscCost
       additionalNotes
@@ -506,6 +641,7 @@ export const GET_SHARED_PROJECT = gql`
       materialCost
       finishCost
       sheetGoodsCost
+      consumableCost
       totalCost
       createdBy
       currency

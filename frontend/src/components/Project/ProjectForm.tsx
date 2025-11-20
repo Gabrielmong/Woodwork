@@ -1,36 +1,35 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
-  TextField,
   Stack,
-  Box,
   Typography,
-  Chip,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  OutlinedInput,
-  Divider,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import type {
   Project,
   CreateProjectInput,
   CreateBoardInput,
   CreateProjectSheetGoodInput,
+  CreateProjectConsumableInput,
 } from '../../types/project';
 import { ProjectStatus, calculateBoardFootage } from '../../types/project';
 import type { Lumber } from '../../types/lumber';
 import type { Finish } from '../../types/finish';
 import type { SheetGood } from '../../types/sheetGood';
-import BoardInput from '../Lumber/BoardInput';
-import SheetGoodInput from '../SheetGood/SheetGoodInput';
+import type { Consumable } from '../../types/consumable';
 import { useCurrency } from '../../utils/currency';
+import {
+  ProjectBasicInfoSection,
+  ProjectBoardsFormSection,
+  ProjectFinishesFormSection,
+  ProjectSheetGoodsFormSection,
+  ProjectConsumablesFormSection,
+  ProjectCostsSection,
+} from './Form';
 
 interface ProjectFormProps {
   open: boolean;
@@ -40,6 +39,7 @@ interface ProjectFormProps {
   lumberOptions: Lumber[];
   finishOptions: Finish[];
   sheetGoodOptions: SheetGood[];
+  consumableOptions: Consumable[];
 }
 
 export function ProjectForm({
@@ -50,13 +50,16 @@ export function ProjectForm({
   lumberOptions,
   finishOptions,
   sheetGoodOptions,
+  consumableOptions,
 }: ProjectFormProps) {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<ProjectStatus>(ProjectStatus.PLANNED);
   const [boards, setBoards] = useState<CreateBoardInput[]>([]);
   const [finishIds, setFinishIds] = useState<string[]>([]);
   const [projectSheetGoods, setProjectSheetGoods] = useState<CreateProjectSheetGoodInput[]>([]);
+  const [projectConsumables, setProjectConsumables] = useState<CreateProjectConsumableInput[]>([]);
   const [laborCost, setLaborCost] = useState('');
   const [miscCost, setMiscCost] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
@@ -84,6 +87,14 @@ export function ProjectForm({
       return total + sheetGood.price * psg.quantity;
     }, 0);
 
+    // Calculate consumable costs
+    const consumableCost = projectConsumables.reduce((total, pc) => {
+      const consumable = consumableOptions.find((c) => c.id === pc.consumableId);
+      if (!consumable) return total;
+      const packagesNeeded = Math.ceil(pc.quantity / consumable.packageQuantity);
+      return total + packagesNeeded * consumable.price;
+    }, 0);
+
     // Calculate finish costs
     const finishCost = finishIds.reduce((total, finishId) => {
       const finish = finishOptions.find((f) => f.id === finishId);
@@ -95,8 +106,19 @@ export function ProjectForm({
     const labor = parseFloat(laborCost) || 0;
     const misc = parseFloat(miscCost) || 0;
 
-    return boardCost + sheetGoodCost + finishCost + labor + misc;
-  }, [boards, projectSheetGoods, finishIds, laborCost, miscCost, lumberOptions, sheetGoodOptions, finishOptions]);
+    return boardCost + sheetGoodCost + consumableCost + finishCost + labor + misc;
+  }, [
+    boards,
+    projectSheetGoods,
+    projectConsumables,
+    finishIds,
+    laborCost,
+    miscCost,
+    lumberOptions,
+    sheetGoodOptions,
+    consumableOptions,
+    finishOptions,
+  ]);
 
   const resetForm = () => {
     setName('');
@@ -105,6 +127,7 @@ export function ProjectForm({
     setBoards([]);
     setFinishIds([]);
     setProjectSheetGoods([]);
+    setProjectConsumables([]);
     setLaborCost('');
     setMiscCost('');
     setAdditionalNotes('');
@@ -132,6 +155,12 @@ export function ProjectForm({
           sheetGoodId: psg.sheetGoodId,
         })) || [];
       setProjectSheetGoods(projectSheetGoodsFromProject);
+      const projectConsumablesFromProject =
+        editingProject.projectConsumables?.map((pc) => ({
+          quantity: pc.quantity,
+          consumableId: pc.consumableId,
+        })) || [];
+      setProjectConsumables(projectConsumablesFromProject);
       setLaborCost(editingProject.laborCost.toString());
       setMiscCost(editingProject.miscCost.toString());
       setAdditionalNotes(editingProject.additionalNotes || '');
@@ -179,6 +208,27 @@ export function ProjectForm({
     setProjectSheetGoods(projectSheetGoods.filter((_, i) => i !== index));
   };
 
+  const handleAddConsumable = () => {
+    const newConsumable: CreateProjectConsumableInput = {
+      quantity: 1,
+      consumableId: consumableOptions[0]?.id || '',
+    };
+    setProjectConsumables([...projectConsumables, newConsumable]);
+  };
+
+  const handleConsumableChange = (
+    index: number,
+    projectConsumable: CreateProjectConsumableInput
+  ) => {
+    const updatedConsumables = [...projectConsumables];
+    updatedConsumables[index] = projectConsumable;
+    setProjectConsumables(updatedConsumables);
+  };
+
+  const handleRemoveConsumable = (index: number) => {
+    setProjectConsumables(projectConsumables.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = () => {
     const projectData: CreateProjectInput = {
       name,
@@ -187,6 +237,7 @@ export function ProjectForm({
       boards,
       finishIds,
       projectSheetGoods,
+      projectConsumables,
       laborCost: parseFloat(laborCost) || 0,
       miscCost: parseFloat(miscCost) || 0,
       additionalNotes: additionalNotes.trim() || undefined,
@@ -206,7 +257,10 @@ export function ProjectForm({
       )) &&
     // If sheet goods exist, they must all be valid
     (projectSheetGoods.length === 0 ||
-      projectSheetGoods.every((sg) => sg.quantity > 0 && sg.sheetGoodId));
+      projectSheetGoods.every((sg) => sg.quantity > 0 && sg.sheetGoodId)) &&
+    // If consumables exist, they must all be valid
+    (projectConsumables.length === 0 ||
+      projectConsumables.every((pc) => pc.quantity > 0 && pc.consumableId));
 
   return (
     <Dialog
@@ -239,7 +293,7 @@ export function ProjectForm({
             color: 'text.primary',
           }}
         >
-          {editingProject ? 'Edit Project' : 'Create New Project'}
+          {editingProject ? t('project.form.editProject') : t('project.form.createNewProject')}
         </Typography>
         <Typography
           sx={{
@@ -252,233 +306,58 @@ export function ProjectForm({
             borderRadius: 2,
           }}
         >
-          Total: {formatCurrency(totalCost)}
+          {t('project.form.total')}: {formatCurrency(totalCost)}
         </Typography>
       </DialogTitle>
       <DialogContent sx={{ px: 4, pb: 2 }}>
         <Stack spacing={3} sx={{ mt: 1 }}>
-          {/* Project Details */}
-          <TextField
-            label="Project Name"
-            placeholder="e.g., Kitchen Cabinets"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            fullWidth
-            required
-            variant="outlined"
+          <ProjectBasicInfoSection
+            name={name}
+            description={description}
+            status={status}
+            onNameChange={setName}
+            onDescriptionChange={setDescription}
+            onStatusChange={setStatus}
           />
-          <TextField
-            label="Description"
-            placeholder="Describe the project..."
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            fullWidth
-            multiline
-            rows={2}
-            required
-            variant="outlined"
+
+          <ProjectBoardsFormSection
+            boards={boards}
+            lumberOptions={lumberOptions}
+            onAddBoard={handleAddBoard}
+            onBoardChange={handleBoardChange}
+            onRemoveBoard={handleRemoveBoard}
           />
-          <FormControl fullWidth required>
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as ProjectStatus)}
-              label="Status"
-            >
-              <MenuItem value={ProjectStatus.PLANNED}>Planned</MenuItem>
-              <MenuItem value={ProjectStatus.IN_PROGRESS}>In Progress</MenuItem>
-              <MenuItem value={ProjectStatus.FINISHING}>Finishing</MenuItem>
-              <MenuItem value={ProjectStatus.COMPLETED}>Completed</MenuItem>
-            </Select>
-          </FormControl>
-          <Divider />
-          {/* Boards Section */}
-          <Box>
-            <Box
-              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                Boards
-              </Typography>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={handleAddBoard}
-                disabled={lumberOptions.length === 0}
-                sx={{
-                  borderColor: 'primary.main',
-                  color: 'primary.main',
-                  '&:hover': {
-                    borderColor: 'primary.dark',
-                    bgcolor: 'rgba(99, 91, 255, 0.08)',
-                  },
-                }}
-              >
-                Add Board
-              </Button>
-            </Box>
 
-            {boards.length === 0 ? (
-              <Box
-                sx={{
-                  p: 4,
-                  textAlign: 'center',
-                  border: '2px dashed',
-                  borderColor: 'divider',
-                  borderRadius: 2,
-                  bgcolor: 'background.default',
-                }}
-              >
-                <Typography color="text.secondary">
-                  No boards added yet. Click "Add Board" to get started.
-                </Typography>
-              </Box>
-            ) : (
-              <Stack spacing={2}>
-                {boards.map((board, index) => (
-                  <BoardInput
-                    key={index}
-                    board={board}
-                    index={index}
-                    lumberOptions={lumberOptions}
-                    onChange={handleBoardChange}
-                    onRemove={handleRemoveBoard}
-                  />
-                ))}
-              </Stack>
-            )}
-          </Box>
-          <Divider /> {/* Sheet Goods Section */}
-          <Box>
-            <Box
-              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}
-            >
-              <Typography variant="subtitle1" sx={{ fontWeight: 600, color: 'text.primary' }}>
-                Sheet Goods
-              </Typography>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<AddIcon />}
-                onClick={handleAddSheetGood}
-                disabled={sheetGoodOptions.length === 0}
-                sx={{
-                  borderColor: 'primary.main',
-                  color: 'primary.main',
-                  '&:hover': {
-                    borderColor: 'primary.dark',
-                    bgcolor: 'rgba(99, 91, 255, 0.08)',
-                  },
-                }}
-              >
-                Add Sheet Good
-              </Button>
-            </Box>
+          <ProjectSheetGoodsFormSection
+            projectSheetGoods={projectSheetGoods}
+            sheetGoodOptions={sheetGoodOptions}
+            onAddSheetGood={handleAddSheetGood}
+            onSheetGoodChange={handleSheetGoodChange}
+            onRemoveSheetGood={handleRemoveSheetGood}
+          />
 
-            {projectSheetGoods.length === 0 ? (
-              <Box
-                sx={{
-                  p: 3,
-                  textAlign: 'center',
-                  bgcolor: 'background.default',
-                  borderRadius: 2,
-                  border: '1px dashed',
-                  borderColor: 'divider',
-                }}
-              >
-                <Typography variant="body2" color="text.secondary">
-                  No sheet goods added yet. Click "Add Sheet Good" to get started.
-                </Typography>
-              </Box>
-            ) : (
-              <Stack spacing={2}>
-                {projectSheetGoods.map((projectSheetGood, index) => (
-                  <SheetGoodInput
-                    key={index}
-                    projectSheetGood={projectSheetGood}
-                    index={index}
-                    sheetGoodOptions={sheetGoodOptions}
-                    onChange={handleSheetGoodChange}
-                    onRemove={handleRemoveSheetGood}
-                  />
-                ))}
-              </Stack>
-            )}
-          </Box>
-          <Divider /> {/* Sheet Goods Section */}
-          {/* Finishes Section */}
-          <FormControl fullWidth>
-            <InputLabel>Finishes (optional)</InputLabel>
-            <Select
-              multiple
-              value={finishIds}
-              onChange={(e) =>
-                setFinishIds(
-                  typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value
-                )
-              }
-              input={<OutlinedInput label="Finishes (optional)" />}
-              renderValue={(selected) => (
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                  {selected.map((id) => {
-                    const finish = finishOptions.find((f) => f.id === id);
-                    return (
-                      <Chip
-                        key={id}
-                        label={finish?.name || id}
-                        size="small"
-                        sx={{ bgcolor: 'background.default' }}
-                      />
-                    );
-                  })}
-                </Box>
-              )}
-            >
-              {finishOptions.map((finish) => (
-                <MenuItem key={finish.id} value={finish.id}>
-                  {finish.name} - ₡{finish.price.toFixed(2)}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          <Divider />
-          {/* Costs Section */}
-          <Box>
-            <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-              Additional Costs
-            </Typography>
-            <Stack spacing={2}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
-                <TextField
-                  label="Labor Cost (₡)"
-                  type="number"
-                  value={laborCost}
-                  onChange={(e) => setLaborCost(e.target.value)}
-                  inputProps={{ step: '0.01', min: '0' }}
-                  fullWidth
-                />
-                <TextField
-                  label="Miscellaneous Cost (₡)"
-                  type="number"
-                  value={miscCost}
-                  onChange={(e) => setMiscCost(e.target.value)}
-                  inputProps={{ step: '0.01', min: '0' }}
-                  fullWidth
-                />
-              </Stack>
-              <TextField
-                label="Additional Notes"
-                placeholder="Hardware, shipping, etc..."
-                value={additionalNotes}
-                onChange={(e) => setAdditionalNotes(e.target.value)}
-                fullWidth
-                multiline
-                rows={2}
-                variant="outlined"
-              />
-            </Stack>
-          </Box>
+          <ProjectConsumablesFormSection
+            projectConsumables={projectConsumables}
+            consumableOptions={consumableOptions}
+            onAddConsumable={handleAddConsumable}
+            onConsumableChange={handleConsumableChange}
+            onRemoveConsumable={handleRemoveConsumable}
+          />
+
+          <ProjectFinishesFormSection
+            finishIds={finishIds}
+            finishOptions={finishOptions}
+            onFinishIdsChange={setFinishIds}
+          />
+
+          <ProjectCostsSection
+            laborCost={laborCost}
+            miscCost={miscCost}
+            additionalNotes={additionalNotes}
+            onLaborCostChange={setLaborCost}
+            onMiscCostChange={setMiscCost}
+            onAdditionalNotesChange={setAdditionalNotes}
+          />
         </Stack>
       </DialogContent>
       <DialogActions sx={{ px: 4, pb: 4, pt: 3, gap: 1 }}>
@@ -495,7 +374,7 @@ export function ProjectForm({
             },
           }}
         >
-          Cancel
+          {t('project.form.cancel')}
         </Button>
         <Button
           onClick={handleSubmit}
@@ -503,14 +382,14 @@ export function ProjectForm({
           size="large"
           disabled={!isValid}
           sx={{
-            background: isValid ? 'linear-gradient(135deg, #635BFF 0%, #7A73FF 100%)' : undefined,
+            background: isValid ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' : undefined,
             px: 4,
             '&:hover': {
-              background: isValid ? 'linear-gradient(135deg, #4D47CC 0%, #635BFF 100%)' : undefined,
+              background: isValid ? 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)' : undefined,
             },
           }}
         >
-          {editingProject ? 'Update Project' : 'Create Project'}
+          {editingProject ? t('project.form.updateProject') : t('project.form.createProject')}
         </Button>
       </DialogActions>
     </Dialog>

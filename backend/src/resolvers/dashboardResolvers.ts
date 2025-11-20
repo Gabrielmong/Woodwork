@@ -59,6 +59,12 @@ export const dashboardResolvers = {
           isDeleted: false,
         },
       });
+      const totalConsumables = await prisma.consumable.count({
+        where: {
+          userId: user.userId,
+          isDeleted: false,
+        },
+      });
       const totalTools = await prisma.tool.count({
         where: {
           userId: user.userId,
@@ -114,6 +120,7 @@ export const dashboardResolvers = {
         totalLumber,
         totalFinishes,
         totalSheetGoods,
+        totalConsumables,
         totalTools,
         totalProjectCost,
         totalBoardFeet,

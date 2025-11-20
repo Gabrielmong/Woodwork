@@ -17,6 +17,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import FormatPaintIcon from '@mui/icons-material/FormatPaint';
 import GridOnIcon from '@mui/icons-material/GridOn';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
 import BuildIcon from '@mui/icons-material/Build';
 import FolderIcon from '@mui/icons-material/Folder';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -76,6 +77,11 @@ export function Sidebar({ open, onClose, variant = 'permanent' }: SidebarProps) 
       text: t('nav.sheetGoods'),
       icon: <GridOnIcon />,
       path: '/app/sheet-goods',
+    },
+    {
+      text: t('nav.consumables'),
+      icon: <Inventory2Icon />,
+      path: '/app/consumables',
     },
     {
       text: t('nav.tools'),

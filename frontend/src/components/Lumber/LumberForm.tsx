@@ -231,10 +231,10 @@ export default function LumberForm({ open, onClose, onSubmit, editingLumber }: L
           size="large"
           disabled={!isValid}
           sx={{
-            background: isValid ? 'linear-gradient(135deg, #635BFF 0%, #7A73FF 100%)' : undefined,
+            background: isValid ? 'linear-gradient(135deg, #3B82F6 0%, #2563EB 100%)' : undefined,
             px: 4,
             '&:hover': {
-              background: isValid ? 'linear-gradient(135deg, #4D47CC 0%, #635BFF 100%)' : undefined,
+              background: isValid ? 'linear-gradient(135deg, #1E40AF 0%, #1E3A8A 100%)' : undefined,
             },
           }}
         >

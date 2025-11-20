@@ -1,6 +1,6 @@
 {
   "name": "woodwork-backend",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "description": "Backend for woodwork calculator - GraphQL API with Prisma",
   "main": "dist/index.js",
   "scripts": {
@@ -11,6 +11,7 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
     "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:db:push": "prisma db push",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"prisma/**/*.prisma\"",

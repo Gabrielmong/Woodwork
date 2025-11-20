@@ -6,6 +6,8 @@ import type {
   CreateBoardInput,
   ProjectSheetGood,
   CreateProjectSheetGoodInput,
+  ProjectConsumable,
+  CreateProjectConsumableInput,
 } from '../../types/project';
 import { VARA_TO_INCHES, ProjectStatus } from '../../types/project';
 
@@ -27,6 +29,13 @@ export function createProjectSheetGood(input: CreateProjectSheetGoodInput): Proj
   };
 }
 
+export function createProjectConsumable(input: CreateProjectConsumableInput): ProjectConsumable {
+  return {
+    id: crypto.randomUUID(),
+    ...input,
+  };
+}
+
 export function createProject(input: CreateProjectInput): Project {
   const now = new Date().toISOString();
   return {
@@ -37,6 +46,7 @@ export function createProject(input: CreateProjectInput): Project {
     boards: input?.boards?.map(createBoard),
     finishIds: input.finishIds,
     projectSheetGoods: input.projectSheetGoods?.map(createProjectSheetGood) || [],
+    projectConsumables: input.projectConsumables?.map(createProjectConsumable) || [],
     laborCost: input.laborCost,
     miscCost: input.miscCost,
     additionalNotes: input.additionalNotes,
@@ -60,6 +70,9 @@ export function updateProjectItem(
     projectSheetGoods: updates.projectSheetGoods
       ? updates.projectSheetGoods.map(createProjectSheetGood)
       : project.projectSheetGoods,
+    projectConsumables: updates.projectConsumables
+      ? updates.projectConsumables.map(createProjectConsumable)
+      : project.projectConsumables,
     laborCost: updates.laborCost ?? project.laborCost,
     miscCost: updates.miscCost ?? project.miscCost,
     additionalNotes: updates.additionalNotes ?? project.additionalNotes,

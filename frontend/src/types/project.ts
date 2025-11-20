@@ -1,4 +1,5 @@
 import type { Lumber } from './lumber';
+import type { Consumable } from './consumable';
 
 // 1 Costa Rican vara = 33 inches (0.8382 meters)
 export const VARA_TO_INCHES = 33;
@@ -40,6 +41,13 @@ export interface ProjectSheetGood {
   };
 }
 
+export interface ProjectConsumable {
+  id: string;
+  quantity: number;
+  consumableId: string;
+  consumable?: Consumable;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -49,6 +57,7 @@ export interface Project {
   finishIds?: string[]; // array of finish IDs (for form input)
   finishes?: Array<{ id: string; name: string; price: number }>; // populated finishes from backend
   projectSheetGoods: ProjectSheetGood[];
+  projectConsumables: ProjectConsumable[];
   laborCost: number;
   miscCost: number;
   additionalNotes?: string;
@@ -71,6 +80,7 @@ export interface SharedProject {
     description: string;
   }>;
   projectSheetGoods: ProjectSheetGood[];
+  projectConsumables: ProjectConsumable[];
   laborCost: number;
   miscCost: number;
   additionalNotes?: string;
@@ -78,6 +88,7 @@ export interface SharedProject {
   materialCost: number;
   finishCost: number;
   sheetGoodsCost: number;
+  consumableCost: number;
   totalCost: number;
   createdBy: string;
   currency: string;
@@ -97,6 +108,11 @@ export interface CreateProjectSheetGoodInput {
   sheetGoodId: string;
 }
 
+export interface CreateProjectConsumableInput {
+  quantity: number;
+  consumableId: string;
+}
+
 export interface CreateProjectInput {
   name: string;
   description: string;
@@ -104,6 +120,7 @@ export interface CreateProjectInput {
   boards?: CreateBoardInput[];
   finishIds?: string[];
   projectSheetGoods?: CreateProjectSheetGoodInput[];
+  projectConsumables?: CreateProjectConsumableInput[];
   laborCost: number;
   miscCost: number;
   additionalNotes?: string;
@@ -117,6 +134,7 @@ export interface UpdateProjectInput {
   boards?: CreateBoardInput[];
   finishIds?: string[];
   projectSheetGoods?: CreateProjectSheetGoodInput[];
+  projectConsumables?: CreateProjectConsumableInput[];
   laborCost?: number;
   miscCost?: number;
   additionalNotes?: string;

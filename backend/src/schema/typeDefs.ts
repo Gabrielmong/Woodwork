@@ -76,6 +76,22 @@ export const typeDefs = gql`
     updatedAt: DateTime!
   }
 
+  # Consumable Type
+  type Consumable {
+    id: ID!
+    name: String!
+    description: String!
+    packageQuantity: Int!
+    price: Float!
+    unitPrice: Float!
+    tags: [String!]!
+    storeLink: String
+    imageData: String
+    isDeleted: Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   # Tool Type
   type Tool {
     id: ID!
@@ -114,6 +130,16 @@ export const typeDefs = gql`
     updatedAt: DateTime!
   }
 
+  # ProjectConsumable Type
+  type ProjectConsumable {
+    id: ID!
+    quantity: Int!
+    consumable: Consumable!
+    consumableId: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   # Project Type
   type Project {
     id: ID!
@@ -123,7 +149,9 @@ export const typeDefs = gql`
     boards: [Board!]!
     finishes: [Finish!]!
     projectSheetGoods: [ProjectSheetGood!]!
+    projectConsumables: [ProjectConsumable!]!
     sheetGoodsCost: Float!
+    consumableCost: Float!
     laborCost: Float!
     miscCost: Float!
     additionalNotes: String
@@ -145,7 +173,9 @@ export const typeDefs = gql`
     boards: [Board!]!
     finishes: [Finish!]!
     projectSheetGoods: [ProjectSheetGood!]!
+    projectConsumables: [ProjectConsumable!]!
     sheetGoodsCost: Float!
+    consumableCost: Float!
     laborCost: Float!
     miscCost: Float!
     additionalNotes: String
@@ -175,6 +205,7 @@ export const typeDefs = gql`
     totalLumber: Int!
     totalFinishes: Int!
     totalSheetGoods: Int!
+    totalConsumables: Int!
     totalTools: Int!
     totalProjectCost: Float!
     totalBoardFeet: Float!
@@ -242,6 +273,27 @@ export const typeDefs = gql`
     tags: [String!]
   }
 
+  # Input Types for Consumable
+  input CreateConsumableInput {
+    name: String!
+    description: String!
+    packageQuantity: Int!
+    price: Float!
+    tags: [String!]!
+    storeLink: String
+    imageData: String
+  }
+
+  input UpdateConsumableInput {
+    name: String
+    description: String
+    packageQuantity: Int
+    price: Float
+    tags: [String!]
+    storeLink: String
+    imageData: String
+  }
+
   # Input Types for Tool
   input CreateToolInput {
     name: String!
@@ -276,6 +328,12 @@ export const typeDefs = gql`
     sheetGoodId: String!
   }
 
+  # Input Types for ProjectConsumable
+  input ProjectConsumableInput {
+    quantity: Int!
+    consumableId: String!
+  }
+
   # Input Types for Project
   input CreateProjectInput {
     name: String!
@@ -284,6 +342,7 @@ export const typeDefs = gql`
     boards: [BoardInput!]
     finishIds: [String!]
     projectSheetGoods: [ProjectSheetGoodInput!]
+    projectConsumables: [ProjectConsumableInput!]
     laborCost: Float!
     miscCost: Float!
     additionalNotes: String
@@ -296,6 +355,7 @@ export const typeDefs = gql`
     boards: [BoardInput!]
     finishIds: [String!]
     projectSheetGoods: [ProjectSheetGoodInput!]
+    projectConsumables: [ProjectConsumableInput!]
     laborCost: Float
     miscCost: Float
     additionalNotes: String
@@ -363,6 +423,10 @@ export const typeDefs = gql`
     sheetGoods(includeDeleted: Boolean): [SheetGood!]!
     sheetGood(id: ID!): SheetGood
 
+    # Consumable Queries (Private)
+    consumables(includeDeleted: Boolean): [Consumable!]!
+    consumable(id: ID!): Consumable
+
     # Tool Queries (Private)
     tools(includeDeleted: Boolean): [Tool!]!
     tool(id: ID!): Tool
@@ -410,6 +474,13 @@ export const typeDefs = gql`
     deleteSheetGood(id: ID!): SheetGood!
     restoreSheetGood(id: ID!): SheetGood!
     hardDeleteSheetGood(id: ID!): Boolean!
+
+    # Consumable Mutations (Private)
+    createConsumable(input: CreateConsumableInput!): Consumable!
+    updateConsumable(id: ID!, input: UpdateConsumableInput!): Consumable!
+    deleteConsumable(id: ID!): Consumable!
+    restoreConsumable(id: ID!): Consumable!
+    hardDeleteConsumable(id: ID!): Boolean!
 
     # Tool Mutations (Private)
     createTool(input: CreateToolInput!): Tool!

@@ -118,6 +118,7 @@ export function ViewLayout({
           direction="row"
           spacing={2}
           alignItems="center"
+          justifyContent="flex-end"
           sx={{ width: { xs: '100%', sm: 'auto' }, flexWrap: 'wrap', gap: 1 }}
         >
           {!isEmpty && (

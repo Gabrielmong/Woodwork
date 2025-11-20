@@ -3,6 +3,7 @@ import { userResolvers } from './userResolvers';
 import { lumberResolvers } from './lumberResolvers';
 import { finishResolvers } from './finishResolvers';
 import { sheetGoodResolvers } from './sheetGoodResolvers';
+import { consumableResolvers } from './consumableResolvers';
 import { toolResolvers } from './toolResolvers';
 import { projectResolvers } from './projectResolvers';
 import { settingsResolvers } from './settingsResolvers';
@@ -41,6 +42,7 @@ export const resolvers = {
     ...lumberResolvers.Query,
     ...finishResolvers.Query,
     ...sheetGoodResolvers.Query,
+    ...consumableResolvers.Query,
     ...toolResolvers.Query,
     ...projectResolvers.Query,
     ...settingsResolvers.Query,
@@ -52,6 +54,7 @@ export const resolvers = {
     ...lumberResolvers.Mutation,
     ...finishResolvers.Mutation,
     ...sheetGoodResolvers.Mutation,
+    ...consumableResolvers.Mutation,
     ...toolResolvers.Mutation,
     ...projectResolvers.Mutation,
     ...settingsResolvers.Mutation,
@@ -61,4 +64,5 @@ export const resolvers = {
   Project: projectResolvers.Project,
   Board: projectResolvers.Board,
   SharedProject: projectResolvers.SharedProject,
+  Consumable: consumableResolvers.Consumable,
 };
