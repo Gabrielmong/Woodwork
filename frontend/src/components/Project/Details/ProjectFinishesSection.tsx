@@ -103,13 +103,15 @@ export function ProjectFinishesSection({
                     >
                       {t('common.price')}
                     </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ textDecoration: 'line-through' }}
-                    >
-                      {formatCurrency(totalFinishCost)}
-                    </Typography>
+                    {totalFinishCost !== cost && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ textDecoration: 'line-through' }}
+                      >
+                        {formatCurrency(totalFinishCost)}
+                      </Typography>
+                    )}
                     <Typography variant="h6" sx={{ fontWeight: 700, color: 'success.main' }}>
                       {formatCurrency(cost)}
                     </Typography>
