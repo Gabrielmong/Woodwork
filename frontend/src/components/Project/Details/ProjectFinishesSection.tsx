@@ -51,9 +51,40 @@ export function ProjectFinishesSection({
                   spacing={2}
                 >
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
-                      {finish.name}
-                    </Typography>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
+                        {finish.name}
+                      </Typography>
+
+                      <Box sx={{ textAlign: 'right' }}>
+                        <Typography
+                          variant="caption"
+                          color="text.secondary"
+                          display="block"
+                          sx={{ mb: 0.5 }}
+                        >
+                          {t('common.price')}
+                        </Typography>
+                        {totalFinishCost !== cost && (
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ textDecoration: 'line-through' }}
+                          >
+                            {formatCurrency(totalFinishCost)}
+                          </Typography>
+                        )}
+                        <Typography variant="h6" sx={{ fontWeight: 700, color: 'success.main' }}>
+                          {formatCurrency(cost)}
+                        </Typography>
+                      </Box>
+                    </Box>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                       {finish.description}
                     </Typography>
@@ -93,28 +124,6 @@ export function ProjectFinishesSection({
                         ))}
                       </Stack>
                     )}
-                  </Box>
-                  <Box sx={{ textAlign: 'right' }}>
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      display="block"
-                      sx={{ mb: 0.5 }}
-                    >
-                      {t('common.price')}
-                    </Typography>
-                    {totalFinishCost !== cost && (
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ textDecoration: 'line-through' }}
-                      >
-                        {formatCurrency(totalFinishCost)}
-                      </Typography>
-                    )}
-                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'success.main' }}>
-                      {formatCurrency(cost)}
-                    </Typography>
                   </Box>
                 </Stack>
               </Paper>
