@@ -32,6 +32,7 @@ import {
   ProjectCostBreakdown,
 } from './Details';
 import { ArrowBack } from '@mui/icons-material';
+import { useCurrency } from '../../utils/currency';
 
 export function ProjectDetails() {
   const { t } = useTranslation();
@@ -41,6 +42,7 @@ export function ProjectDetails() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [formOpen, setFormOpen] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const formatCurrency = useCurrency();
 
   const {
     data: projectData,
@@ -266,14 +268,26 @@ export function ProjectDetails() {
         price={project.price}
       />
 
-      <ProjectBoardsSection boards={project.boards} totalBoardFootage={totalBoardFootage} />
+      <ProjectBoardsSection
+        boards={project.boards}
+        totalBoardFootage={totalBoardFootage}
+        formatCurrency={formatCurrency}
+      />
 
-      <ProjectFinishesSection projectFinishes={project.projectFinishes} />
+      <ProjectFinishesSection
+        projectFinishes={project.projectFinishes}
+        formatCurrency={formatCurrency}
+      />
 
-      <ProjectSheetGoodsSection projectSheetGoods={project.projectSheetGoods} />
+      <ProjectSheetGoodsSection
+        projectSheetGoods={project.projectSheetGoods}
+        formatCurrency={formatCurrency}
+      />
 
-      <ProjectConsumablesSection projectConsumables={project.projectConsumables} />
-
+      <ProjectConsumablesSection
+        projectConsumables={project.projectConsumables}
+        formatCurrency={formatCurrency}
+      />
       <ProjectCostBreakdown
         materialCost={materialCost}
         finishCost={finishCost}
