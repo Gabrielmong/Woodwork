@@ -6,6 +6,8 @@ export const StatusChip = ({ status }: { status: ProjectStatus }) => {
   const { t } = useTranslation();
 
   switch (status) {
+    case ProjectStatus.PRICE:
+      return <Chip label={t('project.status.price')} size="small" color="primary" />;
     case ProjectStatus.PLANNED:
       return <Chip label={t('project.status.planned')} size="small" color="default" />;
     case ProjectStatus.IN_PROGRESS:
