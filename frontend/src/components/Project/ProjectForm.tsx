@@ -56,7 +56,7 @@ export function ProjectForm({
   const { t } = useTranslation();
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
-  const [status, setStatus] = useState<ProjectStatus>(ProjectStatus.PLANNED);
+  const [status, setStatus] = useState<ProjectStatus>(ProjectStatus.PRICE);
   const [price, setPrice] = useState('');
   const [boards, setBoards] = useState<CreateBoardInput[]>([]);
   const [projectFinishes, setProjectFinishes] = useState<CreateProjectFinishInput[]>([]);
@@ -125,7 +125,7 @@ export function ProjectForm({
   const resetForm = () => {
     setName('');
     setDescription('');
-    setStatus(ProjectStatus.PLANNED);
+    setStatus(ProjectStatus.PRICE);
     setPrice('');
     setBoards([]);
     setProjectFinishes([]);

@@ -40,8 +40,10 @@ export const dashboardResolvers = {
         },
       });
 
+      const notActive = ['COMPLETED', 'PRICE'];
+
       // Filter out completed projects
-      const projects = allProjects.filter((project) => project.status !== 'COMPLETED');
+      const projects = allProjects.filter((project) => !notActive.includes(project.status));
 
       // Get counts
       const totalProjects = projects.length;
@@ -110,7 +112,7 @@ export const dashboardResolvers = {
         // Calculate finish cost (with percentage)
         const finishCost = project.projectFinishes.reduce((total, projectFinish) => {
           const percentageDecimal = projectFinish.percentageUsed / 100;
-          return total + (projectFinish.finish.price * percentageDecimal);
+          return total + projectFinish.finish.price * percentageDecimal;
         }, 0);
 
         totalProjectCost += materialCost + finishCost + project.laborCost + project.miscCost;

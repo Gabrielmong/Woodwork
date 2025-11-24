@@ -6,6 +6,7 @@ export const typeDefs = gql`
 
   # Enums
   enum ProjectStatus {
+    PRICE
     PLANNED
     IN_PROGRESS
     FINISHING

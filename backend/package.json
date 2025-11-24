@@ -1,6 +1,6 @@
 {
   "name": "woodwork-backend",
-  "version": "1.12.0",
+  "version": "1.12.1",
   "description": "Backend for woodwork calculator - GraphQL API with Prisma",
   "main": "dist/index.js",
   "scripts": {

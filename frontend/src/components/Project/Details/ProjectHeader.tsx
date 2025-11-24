@@ -88,6 +88,14 @@ export function ProjectHeader({
               label={t('common.status')}
               size="small"
             >
+              <MenuItem value={ProjectStatus.PRICE}>
+                <Chip
+                  label={t('project.status.price')}
+                  size="small"
+                  color="default"
+                  sx={{ height: 22, fontSize: '0.75rem' }}
+                />
+              </MenuItem>
               <MenuItem value={ProjectStatus.PLANNED}>
                 <Chip
                   label={t('project.status.planned')}

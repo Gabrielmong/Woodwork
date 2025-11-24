@@ -247,6 +247,7 @@
   },
   "project": {
     "status": {
+      "price": "Cotización de Precio",
       "planned": "Planificado",
       "inProgress": "En Progreso",
       "finishing": "Finalizando",

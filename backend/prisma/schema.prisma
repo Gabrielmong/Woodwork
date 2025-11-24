@@ -1,5 +1,3 @@
-// Prisma schema for Woodwork Calculator
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,27 +8,25 @@ datasource db {
 }
 
 model User {
-  id                String    @id @default(uuid())
-  username          String    @unique
-  email             String?   @unique
-  password          String    // bcrypt hashed password
-  firstName         String
-  lastName          String
-  dateOfBirth       DateTime?
-  hasAcceptedTerms  Boolean   @default(false)
-  imageData         String?   @db.Text // Base64 encoded profile image
-  isDeleted         Boolean   @default(false)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-
-  // Relations
-  lumber            Lumber[]
-  finishes          Finish[]
-  sheetGoods        SheetGood[]
-  consumables       Consumable[]
-  projects          Project[]
-  tools             Tool[]
-  settings          Settings?
+  id               String       @id @default(uuid())
+  username         String       @unique
+  email            String?      @unique
+  password         String
+  firstName        String
+  lastName         String
+  dateOfBirth      DateTime?
+  hasAcceptedTerms Boolean      @default(false)
+  imageData        String?
+  isDeleted        Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+  consumables      Consumable[]
+  finishes         Finish[]
+  lumber           Lumber[]
+  projects         Project[]
+  settings         Settings?
+  sheetGoods       SheetGood[]
+  tools            Tool[]
 
   @@index([username])
   @@index([email])
@@ -39,20 +35,18 @@ model User {
 }
 
 model Lumber {
-  id               String    @id @default(uuid())
+  id               String   @id @default(uuid())
   name             String
   description      String
   jankaRating      Float
   costPerBoardFoot Float
   tags             String[]
-  isDeleted        Boolean   @default(false)
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
-
-  // Relations
+  isDeleted        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
   userId           String
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   boards           Board[]
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isDeleted])
@@ -60,20 +54,18 @@ model Lumber {
 }
 
 model Finish {
-  id             String          @id @default(uuid())
-  name           String
-  description    String
-  price          Float
-  tags           String[]
-  storeLink      String?
-  imageData      String?         @db.Text // Base64 encoded image
-  isDeleted      Boolean         @default(false)
-  createdAt      DateTime        @default(now())
-  updatedAt      DateTime        @updatedAt
-
-  // Relations
-  userId         String
-  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id              String          @id @default(uuid())
+  name            String
+  description     String
+  price           Float
+  tags            String[]
+  storeLink       String?
+  imageData       String?
+  isDeleted       Boolean         @default(false)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectFinishes ProjectFinish[]
 
   @@index([userId])
@@ -85,20 +77,18 @@ model SheetGood {
   id                String             @id @default(uuid())
   name              String
   description       String
-  width             Float              // inches
-  length            Float              // inches
-  thickness         Float              // inches
+  width             Float
+  length            Float
+  thickness         Float
   price             Float
-  materialType      String             // aglomerate, ply, melamine, etc
+  materialType      String
   tags              String[]
   isDeleted         Boolean            @default(false)
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
-
-  // Relations
   userId            String
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectSheetGoods ProjectSheetGood[]
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isDeleted])
@@ -106,21 +96,19 @@ model SheetGood {
 }
 
 model Consumable {
-  id               String              @id @default(uuid())
-  name             String
-  description      String
-  packageQuantity  Int                 // Number of items per package
-  price            Float               // Price per package
-  tags             String[]
-  storeLink        String?
-  imageData        String?             @db.Text // Base64 encoded image
-  isDeleted        Boolean             @default(false)
-  createdAt        DateTime            @default(now())
-  updatedAt        DateTime            @updatedAt
-
-  // Relations
-  userId           String
-  user             User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                 String              @id @default(uuid())
+  name               String
+  description        String
+  packageQuantity    Int
+  price              Float
+  tags               String[]
+  storeLink          String?
+  imageData          String?
+  isDeleted          Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  userId             String
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   projectConsumables ProjectConsumable[]
 
   @@index([userId])
@@ -128,33 +116,24 @@ model Consumable {
   @@map("consumables")
 }
 
-enum ProjectStatus {
-  PLANNED
-  IN_PROGRESS
-  FINISHING
-  COMPLETED
-}
-
 model Project {
-  id                String             @id @default(uuid())
-  name              String
-  description       String
-  status            ProjectStatus      @default(PLANNED)
-  price             Float              @default(0) // Quote/Cotización price
-  laborCost         Float              @default(0)
-  miscCost          Float              @default(0)
-  additionalNotes   String?
-  isDeleted         Boolean            @default(false)
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-
-  // Relations
-  userId            String
-  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  boards            Board[]
-  projectFinishes   ProjectFinish[]
-  projectSheetGoods ProjectSheetGood[]
+  id                 String              @id @default(uuid())
+  name               String
+  description        String
+  laborCost          Float               @default(0)
+  miscCost           Float               @default(0)
+  additionalNotes    String?
+  isDeleted          Boolean             @default(false)
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  userId             String
+  status             ProjectStatus       @default(PRICE)
+  price              Float               @default(0)
+  boards             Board[]
   projectConsumables ProjectConsumable[]
+  projectFinishes    ProjectFinish[]
+  projectSheetGoods  ProjectSheetGood[]
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isDeleted])
@@ -163,20 +142,17 @@ model Project {
 }
 
 model Board {
-  id         String   @id @default(uuid())
-  width      Float    // inches
-  thickness  Float    // inches
-  length     Float    // varas
-  quantity   Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Relations
-  projectId  String
-  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  lumberId   String
-  lumber     Lumber   @relation(fields: [lumberId], references: [id])
+  id        String   @id @default(uuid())
+  width     Float
+  thickness Float
+  length    Float
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
+  lumberId  String
+  lumber    Lumber   @relation(fields: [lumberId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([lumberId])
@@ -188,12 +164,9 @@ model ProjectSheetGood {
   quantity    Int
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  // Relations
   projectId   String
-  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
   sheetGoodId String
+  project     Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
   sheetGood   SheetGood @relation(fields: [sheetGoodId], references: [id])
 
   @@index([projectId])
@@ -203,16 +176,13 @@ model ProjectSheetGood {
 
 model ProjectConsumable {
   id           String     @id @default(uuid())
-  quantity     Int        // Number of items needed (not packages)
+  quantity     Int
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
-
-  // Relations
   projectId    String
-  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
   consumableId String
   consumable   Consumable @relation(fields: [consumableId], references: [id])
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([consumableId])
@@ -220,17 +190,14 @@ model ProjectConsumable {
 }
 
 model ProjectFinish {
-  id              String   @id @default(uuid())
-  percentageUsed  Float    @default(100) // Percentage of finish used (0-100)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  // Relations
-  projectId       String
-  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
-
-  finishId        String
-  finish          Finish   @relation(fields: [finishId], references: [id])
+  id             String   @id @default(uuid())
+  percentageUsed Float    @default(100)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  projectId      String
+  finishId       String
+  finish         Finish   @relation(fields: [finishId], references: [id])
+  project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@index([projectId])
   @@index([finishId])
@@ -238,20 +205,18 @@ model ProjectFinish {
 }
 
 model Tool {
-  id           String    @id @default(uuid())
+  id           String   @id @default(uuid())
   name         String
   description  String
-  function     String    // What the tool is used for
+  function     String
   price        Float
   serialNumber String?
-  imageData    String?   @db.Text // Base64 encoded image
-  isDeleted    Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  // Relations
+  imageData    String?
+  isDeleted    Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   userId       String
-  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([isDeleted])
@@ -261,12 +226,20 @@ model Tool {
 model Settings {
   id        String   @id @default(uuid())
   userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  currency  String   @default("USD") // 'CRC' or 'USD'
-  language  String   @default("en")  // 'en' or 'es'
-  themeMode String   @default("light") // 'light' or 'dark'
+  currency  String   @default("USD")
+  language  String   @default("en")
+  themeMode String   @default("light")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("settings")
+}
+
+enum ProjectStatus {
+  PLANNED
+  IN_PROGRESS
+  FINISHING
+  COMPLETED
+  PRICE
 }

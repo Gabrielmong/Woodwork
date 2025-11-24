@@ -1,5 +1,14 @@
 import { useTranslation } from 'react-i18next';
-import { Box, Stack, Typography, FormControl, Select, MenuItem, Chip, Divider } from '@mui/material';
+import {
+  Box,
+  Stack,
+  Typography,
+  FormControl,
+  Select,
+  MenuItem,
+  Chip,
+  Divider,
+} from '@mui/material';
 import { ProjectStatus, type Project } from '../../../types/project';
 
 const truncateText = (text: string, maxLength: number = 150) => {
@@ -55,6 +64,14 @@ export function ProjectCardHeader({ project, onStatusChange }: ProjectCardHeader
                       },
                     }}
                   >
+                    <MenuItem value={ProjectStatus.PRICE}>
+                      <Chip
+                        label={t('project.status.price')}
+                        size="small"
+                        color="default"
+                        sx={{ height: 22, fontSize: '0.75rem' }}
+                      />
+                    </MenuItem>
                     <MenuItem value={ProjectStatus.PLANNED}>
                       <Chip
                         label={t('project.status.planned')}
@@ -90,7 +107,14 @@ export function ProjectCardHeader({ project, onStatusChange }: ProjectCardHeader
                   </Select>
                 </FormControl>
               ) : (
-                project.isDeleted && <Chip label={t('common.deleted')} size="small" color="error" sx={{ height: 24 }} />
+                project.isDeleted && (
+                  <Chip
+                    label={t('common.deleted')}
+                    size="small"
+                    color="error"
+                    sx={{ height: 24 }}
+                  />
+                )
               )}
             </Stack>
           </Stack>

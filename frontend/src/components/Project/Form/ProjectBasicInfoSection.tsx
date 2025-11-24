@@ -1,12 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Divider,
-} from '@mui/material';
+import { TextField, FormControl, InputLabel, Select, MenuItem, Divider } from '@mui/material';
 import { ProjectStatus } from '../../../types/project';
 
 interface ProjectBasicInfoSectionProps {
@@ -61,6 +54,7 @@ export function ProjectBasicInfoSection({
           onChange={(e) => onStatusChange(e.target.value as ProjectStatus)}
           label={t('project.form.statusLabel')}
         >
+          <MenuItem value={ProjectStatus.PRICE}>{t('project.status.price')}</MenuItem>
           <MenuItem value={ProjectStatus.PLANNED}>{t('project.status.planned')}</MenuItem>
           <MenuItem value={ProjectStatus.IN_PROGRESS}>{t('project.status.inProgress')}</MenuItem>
           <MenuItem value={ProjectStatus.FINISHING}>{t('project.status.finishing')}</MenuItem>

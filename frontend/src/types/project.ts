@@ -5,6 +5,7 @@ import type { Consumable } from './consumable';
 export const VARA_TO_INCHES = 33;
 
 export const ProjectStatus = {
+  PRICE: 'PRICE',
   PLANNED: 'PLANNED',
   IN_PROGRESS: 'IN_PROGRESS',
   FINISHING: 'FINISHING',
