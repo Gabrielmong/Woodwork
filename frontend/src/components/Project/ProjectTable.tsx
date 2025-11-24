@@ -68,7 +68,7 @@ export function ProjectTable({
       const finish = pf.finish;
       if (!finish) return total;
       const percentageDecimal = pf.percentageUsed / 100;
-      return total + (finish.price * percentageDecimal);
+      return total + (finish.price * percentageDecimal * pf.quantity);
     }, 0);
 
     const sheetGoodCost = projectSheetGoods.reduce((total, projectSheetGood) => {

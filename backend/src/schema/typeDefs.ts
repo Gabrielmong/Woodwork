@@ -144,6 +144,7 @@ export const typeDefs = gql`
   # ProjectFinish Type
   type ProjectFinish {
     id: ID!
+    quantity: Int!
     percentageUsed: Float!
     finish: Finish!
     finishId: String!
@@ -350,6 +351,7 @@ export const typeDefs = gql`
   # Input Types for ProjectFinish
   input ProjectFinishInput {
     finishId: String!
+    quantity: Int!
     percentageUsed: Float!
   }
 

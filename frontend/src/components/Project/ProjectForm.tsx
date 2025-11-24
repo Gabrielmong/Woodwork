@@ -154,6 +154,7 @@ export function ProjectForm({
       const projectFinishesFromProject =
         editingProject.projectFinishes?.map((pf) => ({
           finishId: pf.finishId,
+          quantity: pf.quantity,
           percentageUsed: pf.percentageUsed,
         })) || [];
       setProjectFinishes(projectFinishesFromProject);

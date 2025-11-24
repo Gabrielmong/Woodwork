@@ -191,6 +191,7 @@ model ProjectConsumable {
 
 model ProjectFinish {
   id             String   @id @default(uuid())
+  quantity       Int      @default(1)
   percentageUsed Float    @default(100)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
@@ -199,6 +200,7 @@ model ProjectFinish {
   finish         Finish   @relation(fields: [finishId], references: [id])
   project        Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
+  @@unique([projectId, finishId])
   @@index([projectId])
   @@index([finishId])
   @@map("project_finishes")

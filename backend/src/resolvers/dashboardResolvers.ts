@@ -109,10 +109,10 @@ export const dashboardResolvers = {
           return total + boardFeet * board.lumber.costPerBoardFoot;
         }, 0);
 
-        // Calculate finish cost (with percentage)
+        // Calculate finish cost (with percentage and quantity)
         const finishCost = project.projectFinishes.reduce((total, projectFinish) => {
           const percentageDecimal = projectFinish.percentageUsed / 100;
-          return total + projectFinish.finish.price * percentageDecimal;
+          return total + projectFinish.finish.price * percentageDecimal * projectFinish.quantity;
         }, 0);
 
         // only add to total project cost if project is not in PRICE status

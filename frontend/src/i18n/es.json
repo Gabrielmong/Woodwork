@@ -332,7 +332,8 @@
     "saveChanges": "Guardar Cambios",
     "editProfile": "Editar Perfil",
     "changePassword": "Cambiar Contraseña",
-    "linkCopied": "Enlace copiado al portapapeles"
+    "linkCopied": "Enlace copiado al portapapeles",
+    "quantity": "Cantidad"
   },
   "account": {
     "title": "Cuenta",

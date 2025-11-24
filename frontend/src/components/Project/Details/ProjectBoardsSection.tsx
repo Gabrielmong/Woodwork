@@ -28,6 +28,10 @@ export function ProjectBoardsSection({
 }: ProjectBoardsSectionProps) {
   const { t } = useTranslation();
 
+  if (!boards || boards.length === 0) {
+    return null;
+  }
+
   return (
     <Card sx={{ borderRadius: 2 }}>
       <CardContent sx={{ p: 3 }}>

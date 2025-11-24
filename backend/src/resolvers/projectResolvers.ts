@@ -429,7 +429,7 @@ export const projectResolvers = {
     finishCost: (parent: any) => {
       return parent.projectFinishes.reduce((total: number, projectFinish: any) => {
         const percentageDecimal = projectFinish.percentageUsed / 100;
-        return total + (projectFinish.finish.price * percentageDecimal);
+        return total + (projectFinish.finish.price * percentageDecimal * projectFinish.quantity);
       }, 0);
     },
 
@@ -453,7 +453,7 @@ export const projectResolvers = {
 
       const finishCost = parent.projectFinishes.reduce((total: number, projectFinish: any) => {
         const percentageDecimal = projectFinish.percentageUsed / 100;
-        return total + (projectFinish.finish.price * percentageDecimal);
+        return total + (projectFinish.finish.price * percentageDecimal * projectFinish.quantity);
       }, 0);
 
       const sheetGoodsCost = parent.projectSheetGoods.reduce(
@@ -514,7 +514,7 @@ export const projectResolvers = {
       if (!parent.projectFinishes || parent.projectFinishes.length === 0) return 0;
       return parent.projectFinishes.reduce((total: number, projectFinish: any) => {
         const percentageDecimal = projectFinish.percentageUsed / 100;
-        return total + ((projectFinish.finish?.price || 0) * percentageDecimal);
+        return total + ((projectFinish.finish?.price || 0) * percentageDecimal * projectFinish.quantity);
       }, 0);
     },
 
@@ -551,7 +551,7 @@ export const projectResolvers = {
 
       const finishCost = projectFinishes.reduce((total: number, projectFinish: any) => {
         const percentageDecimal = projectFinish.percentageUsed / 100;
-        return total + ((projectFinish.finish?.price || 0) * percentageDecimal);
+        return total + ((projectFinish.finish?.price || 0) * percentageDecimal * projectFinish.quantity);
       }, 0);
 
       const sheetGoodsCost = projectSheetGoods.reduce((total: number, projectSheetGood: any) => {

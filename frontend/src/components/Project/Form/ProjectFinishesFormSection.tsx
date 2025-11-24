@@ -7,6 +7,7 @@ import {
   Select,
   MenuItem,
   Slider,
+  TextField,
   Typography,
   IconButton,
   Stack,
@@ -40,7 +41,7 @@ export function ProjectFinishesFormSection({
     if (availableFinish) {
       onProjectFinishesChange([
         ...projectFinishes,
-        { finishId: availableFinish.id, percentageUsed: 100 },
+        { finishId: availableFinish.id, quantity: 1, percentageUsed: 100 },
       ]);
     }
   };
@@ -52,6 +53,12 @@ export function ProjectFinishesFormSection({
   const handleFinishChange = (index: number, finishId: string) => {
     const updated = [...projectFinishes];
     updated[index] = { ...updated[index], finishId };
+    onProjectFinishesChange(updated);
+  };
+
+  const handleQuantityChange = (index: number, quantity: number) => {
+    const updated = [...projectFinishes];
+    updated[index] = { ...updated[index], quantity: Math.max(1, quantity) };
     onProjectFinishesChange(updated);
   };
 
@@ -96,7 +103,7 @@ export function ProjectFinishesFormSection({
           <Stack spacing={2}>
             {projectFinishes.map((projectFinish, index) => {
               const finish = finishOptions.find((f) => f.id === projectFinish.finishId);
-              const cost = finish ? (finish.price * projectFinish.percentageUsed) / 100 : 0;
+              const cost = finish ? (finish.price * projectFinish.percentageUsed * projectFinish.quantity) / 100 : 0;
 
               return (
                 <Paper
@@ -131,6 +138,18 @@ export function ProjectFinishesFormSection({
                     >
                       <DeleteIcon />
                     </IconButton>
+                  </Box>
+
+                  <Box sx={{ mt: 2 }}>
+                    <TextField
+                      fullWidth
+                      type="number"
+                      label={t('common.quantity')}
+                      value={projectFinish.quantity}
+                      onChange={(e) => handleQuantityChange(index, parseInt(e.target.value) || 1)}
+                      inputProps={{ min: 1 }}
+                      size="small"
+                    />
                   </Box>
 
                   <Box sx={{ mt: 2 }}>

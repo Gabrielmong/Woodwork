@@ -47,7 +47,7 @@ export function ProjectCard({
       const finish = projectFinish.finish;
       if (!finish) return total;
       const percentageDecimal = projectFinish.percentageUsed / 100;
-      return total + finish.price * percentageDecimal;
+      return total + finish.price * percentageDecimal * projectFinish.quantity;
     }, 0);
 
     const sheetGoodCost = projectSheetGoods.reduce((total, projectSheetGood) => {

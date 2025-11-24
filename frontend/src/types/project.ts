@@ -51,6 +51,7 @@ export interface ProjectConsumable {
 
 export interface ProjectFinish {
   id: string;
+  quantity: number;
   percentageUsed: number;
   finishId: string;
   finish?: {
@@ -126,6 +127,7 @@ export interface CreateProjectConsumableInput {
 
 export interface CreateProjectFinishInput {
   finishId: string;
+  quantity: number;
   percentageUsed: number;
 }
 

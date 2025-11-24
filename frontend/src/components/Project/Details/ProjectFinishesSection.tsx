@@ -28,7 +28,10 @@ export function ProjectFinishesSection({
             const finish = projectFinish.finish;
             if (!finish) return null;
 
-            const cost = (finish.price * projectFinish.percentageUsed) / 100;
+            const totalFinishCost = finish.price * projectFinish.quantity;
+
+            const cost =
+              (finish.price * projectFinish.percentageUsed * projectFinish.quantity) / 100;
 
             return (
               <Paper
@@ -54,7 +57,16 @@ export function ProjectFinishesSection({
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
                       {finish.description}
                     </Typography>
-                    <Box sx={{ mb: 1.5 }}>
+                    <Box sx={{ mb: 1.5, display: 'flex', gap: 1 }}>
+                      <Chip
+                        label={`${t('common.quantity')}: ${projectFinish.quantity}`}
+                        size="small"
+                        color="secondary"
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: '0.75rem',
+                        }}
+                      />
                       <Chip
                         label={`${projectFinish.percentageUsed}% ${t('finishes.percentageUsed')}`}
                         size="small"
@@ -96,7 +108,7 @@ export function ProjectFinishesSection({
                       color="text.secondary"
                       sx={{ textDecoration: 'line-through' }}
                     >
-                      {formatCurrency(finish.price)}
+                      {formatCurrency(totalFinishCost)}
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 700, color: 'success.main' }}>
                       {formatCurrency(cost)}

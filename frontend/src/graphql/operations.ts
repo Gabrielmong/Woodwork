@@ -452,6 +452,7 @@ export const GET_PROJECTS = gql`
       }
       projectFinishes {
         id
+        quantity
         percentageUsed
         finishId
         finish {
@@ -535,6 +536,7 @@ export const GET_PROJECT = gql`
       }
       projectFinishes {
         id
+        quantity
         percentageUsed
         finishId
         finish {
@@ -619,6 +621,7 @@ export const GET_SHARED_PROJECT = gql`
       }
       projectFinishes {
         id
+        quantity
         percentageUsed
         finishId
         finish {
