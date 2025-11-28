@@ -441,7 +441,7 @@ VITE_API_URL="http://localhost:4000/graphql"
 
 ---
 
-**Last Updated:** January 2025
+**Last Updated:** November 2025
 **Project Version:** 1.13.0 (frontend) / 1.13.0 (backend)
 **License:** Proprietary
 **Target Market:** Costa Rican woodworkers and craftspeople
