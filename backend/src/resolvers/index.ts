@@ -8,6 +8,7 @@ import { toolResolvers } from './toolResolvers';
 import { projectResolvers } from './projectResolvers';
 import { settingsResolvers } from './settingsResolvers';
 import { dashboardResolvers } from './dashboardResolvers';
+import { cutListResolvers } from './cutListResolvers';
 
 // Custom DateTime scalar
 const dateTimeScalar = new GraphQLScalarType({
@@ -47,6 +48,7 @@ export const resolvers = {
     ...projectResolvers.Query,
     ...settingsResolvers.Query,
     ...dashboardResolvers.Query,
+    ...cutListResolvers.Query,
   },
 
   Mutation: {
@@ -58,6 +60,7 @@ export const resolvers = {
     ...toolResolvers.Mutation,
     ...projectResolvers.Mutation,
     ...settingsResolvers.Mutation,
+    ...cutListResolvers.Mutation,
   },
 
   // Field resolvers

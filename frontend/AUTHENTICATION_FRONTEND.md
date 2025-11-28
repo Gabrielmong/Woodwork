@@ -5,6 +5,7 @@ Complete guide to the authentication system implemented in the Woodwork frontend
 ## Overview
 
 The frontend uses:
+
 - **Apollo Client** for GraphQL communication
 - **Redux Toolkit** for state management
 - **JWT tokens** stored in localStorage
@@ -63,12 +64,14 @@ src/
 ### 1. Apollo Client (`src/lib/apolloClient.ts`)
 
 **Features**:
+
 - HTTP link to backend GraphQL endpoint
 - Auth link that adds JWT to all requests
 - Error link for automatic logout on auth failures
 - Cache configuration
 
 **Configuration**:
+
 ```typescript
 const authLink = setContext((_, { headers }) => {
   const token = localStorage.getItem('authToken');
@@ -84,6 +87,7 @@ const authLink = setContext((_, { headers }) => {
 ### 2. Auth Slice (`src/store/authSlice.ts`)
 
 **State**:
+
 ```typescript
 interface AuthState {
   user: User | null;
@@ -93,6 +97,7 @@ interface AuthState {
 ```
 
 **Actions**:
+
 - `setCredentials(user, token)` - Store user and token after login/register
 - `updateUser(user)` - Update user profile
 - `logout()` - Clear auth state
@@ -101,12 +106,14 @@ interface AuthState {
 ### 3. GraphQL Operations (`src/graphql/auth.ts`)
 
 **Mutations**:
+
 - `REGISTER` - Create new account
 - `LOGIN` - Authenticate user
 - `UPDATE_USER` - Update profile
 - `CHANGE_PASSWORD` - Change password
 
 **Queries**:
+
 - `GET_ME` - Get current authenticated user
 
 ### 4. Private Route (`src/components/PrivateRoute.tsx`)
@@ -124,6 +131,7 @@ Redirects to `/login` if `isAuthenticated === false`.
 ### 5. Login Page (`src/pages/Login.tsx`)
 
 **Features**:
+
 - Username/password form
 - Password visibility toggle
 - Loading states
@@ -131,6 +139,7 @@ Redirects to `/login` if `isAuthenticated === false`.
 - Link to registration
 
 **Usage**:
+
 ```typescript
 const [login, { loading }] = useMutation(LOGIN, {
   onCompleted: (data) => {
@@ -143,6 +152,7 @@ const [login, { loading }] = useMutation(LOGIN, {
 ### 6. Register Page (`src/pages/Register.tsx`)
 
 **Features**:
+
 - Full registration form (first/last name, username, email, password)
 - Password confirmation
 - Terms acceptance checkbox
@@ -155,11 +165,13 @@ const [login, { loading }] = useMutation(LOGIN, {
 ### Setting Up Environment
 
 1. Create `.env` file:
+
 ```bash
 cp .env.example .env
 ```
 
 2. Configure backend URL:
+
 ```env
 VITE_API_URL=http://localhost:4000/graphql
 ```
@@ -167,16 +179,19 @@ VITE_API_URL=http://localhost:4000/graphql
 ### Running the App
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Start development server:
+
 ```bash
 npm run dev
 ```
 
 3. Access the app:
+
 - **Public**: `http://localhost:5173/login` or `/register`
 - **Private**: All other routes require authentication
 
@@ -225,7 +240,7 @@ Apollo Client automatically adds the JWT token. Just use the queries/mutations:
 
 ```typescript
 import { useQuery } from '@apollo/client';
-import { GET_LUMBERS } from '../graphql/operations';
+import { GET_LUMBERS } from '../graphql';
 
 function LumberList() {
   const { data, loading, error } = useQuery(GET_LUMBERS, {
@@ -270,9 +285,10 @@ function MyComponent() {
 ### Token Storage
 
 **Current**: localStorage
+
 - ✅ Simple implementation
 - ✅ Persists across sessions
-- ⚠️  Vulnerable to XSS attacks
+- ⚠️ Vulnerable to XSS attacks
 
 **Best Practice for Production**:
 Consider using httpOnly cookies for enhanced security.
@@ -280,6 +296,7 @@ Consider using httpOnly cookies for enhanced security.
 ### Automatic Token Refresh
 
 Currently, tokens expire after 7 days (backend configuration). On expiration:
+
 1. Backend returns `UNAUTHENTICATED` error
 2. Error link catches it
 3. User automatically logged out
@@ -288,12 +305,15 @@ Currently, tokens expire after 7 days (backend configuration). On expiration:
 ### CORS Configuration
 
 Backend must allow frontend origin:
+
 ```typescript
 // Backend
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+);
 ```
 
 ## Error Handling
@@ -326,6 +346,7 @@ const errorLink = onError(({ graphQLErrors }) => {
 ### Form Validation
 
 Client-side validation in Register page:
+
 - Required fields check
 - Password length (min 6 characters)
 - Password confirmation match
@@ -338,6 +359,7 @@ Client-side validation in Register page:
 **Symptoms**: Redirected to login immediately
 
 **Solutions**:
+
 1. Check token exists: `localStorage.getItem('authToken')`
 2. Check token is valid (not expired)
 3. Verify backend is running
@@ -349,6 +371,7 @@ Client-side validation in Register page:
 **Symptoms**: Backend returns authentication errors
 
 **Solutions**:
+
 1. Check Apollo Client auth link is configured
 2. Verify token in localStorage
 3. Check Authorization header in Network tab
@@ -359,6 +382,7 @@ Client-side validation in Register page:
 **Symptoms**: User logged out on page refresh
 
 **Solutions**:
+
 1. Check `loadUserFromStorage()` is called in `main.tsx`
 2. Verify token and user data in localStorage
 3. Check Redux DevTools for state
@@ -368,6 +392,7 @@ Client-side validation in Register page:
 **Symptoms**: Network errors, "blocked by CORS policy"
 
 **Solutions**:
+
 1. Check backend CORS configuration
 2. Verify `VITE_API_URL` in `.env`
 3. Ensure backend is running
@@ -378,6 +403,7 @@ Client-side validation in Register page:
 ### Manual Testing
 
 1. **Register Flow**:
+
    ```
    1. Go to /register
    2. Fill form with new user
@@ -387,6 +413,7 @@ Client-side validation in Register page:
    ```
 
 2. **Login Flow**:
+
    ```
    1. Go to /login
    2. Enter credentials
@@ -395,6 +422,7 @@ Client-side validation in Register page:
    ```
 
 3. **Protected Routes**:
+
    ```
    1. Logout
    2. Try to access /dashboard or /lumber
@@ -412,14 +440,16 @@ Client-side validation in Register page:
 ### Browser DevTools
 
 **Check Token**:
+
 ```javascript
 // In browser console
-localStorage.getItem('authToken')
+localStorage.getItem('authToken');
 ```
 
 **Check User**:
+
 ```javascript
-JSON.parse(localStorage.getItem('currentUser'))
+JSON.parse(localStorage.getItem('currentUser'));
 ```
 
 **Check Redux State**:

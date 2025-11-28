@@ -7,10 +7,12 @@ interface ProjectBasicInfoSectionProps {
   description: string;
   status: ProjectStatus;
   price: string;
+  measurementUnit: string;
   onNameChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onStatusChange: (value: ProjectStatus) => void;
   onPriceChange: (value: string) => void;
+  onMeasurementUnitChange: (value: string) => void;
 }
 
 export function ProjectBasicInfoSection({
@@ -18,10 +20,12 @@ export function ProjectBasicInfoSection({
   description,
   status,
   price,
+  measurementUnit,
   onNameChange,
   onDescriptionChange,
   onStatusChange,
   onPriceChange,
+  onMeasurementUnitChange,
 }: ProjectBasicInfoSectionProps) {
   const { t } = useTranslation();
 
@@ -71,6 +75,18 @@ export function ProjectBasicInfoSection({
         variant="outlined"
         helperText={t('project.form.priceHelper')}
       />
+      <FormControl fullWidth>
+        <InputLabel>{t('project.form.measurementUnit')}</InputLabel>
+        <Select
+          value={measurementUnit}
+          onChange={(e) => onMeasurementUnitChange(e.target.value)}
+          label={t('project.form.measurementUnit')}
+        >
+          <MenuItem value="inches">{t('cutList.inches')}</MenuItem>
+          <MenuItem value="cm">{t('cutList.cm')}</MenuItem>
+          <MenuItem value="mm">{t('cutList.mm')}</MenuItem>
+        </Select>
+      </FormControl>
       <Divider />
     </>
   );

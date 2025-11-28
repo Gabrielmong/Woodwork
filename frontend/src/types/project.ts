@@ -71,6 +71,7 @@ export interface Project {
   description: string;
   status: ProjectStatus;
   price: number;
+  measurementUnit: string;
   boards?: Board[];
   projectFinishes?: ProjectFinish[];
   projectSheetGoods: ProjectSheetGood[];
@@ -89,6 +90,7 @@ export interface SharedProject {
   description: string;
   status: ProjectStatus;
   price: number;
+  measurementUnit: string;
   boards: Board[];
   projectFinishes?: ProjectFinish[];
   projectSheetGoods: ProjectSheetGood[];
@@ -136,6 +138,7 @@ export interface CreateProjectInput {
   description: string;
   status?: ProjectStatus;
   price: number;
+  measurementUnit?: string;
   boards?: CreateBoardInput[];
   projectFinishes?: CreateProjectFinishInput[];
   projectSheetGoods?: CreateProjectSheetGoodInput[];
@@ -151,6 +154,7 @@ export interface UpdateProjectInput {
   description?: string;
   status?: ProjectStatus;
   price?: number;
+  measurementUnit?: string;
   boards?: CreateBoardInput[];
   projectFinishes?: CreateProjectFinishInput[];
   projectSheetGoods?: CreateProjectSheetGoodInput[];

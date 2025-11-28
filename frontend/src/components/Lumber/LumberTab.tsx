@@ -7,7 +7,7 @@ import {
   UPDATE_LUMBER,
   DELETE_LUMBER,
   RESTORE_LUMBER,
-} from '../../graphql/operations';
+} from '../../graphql';
 import LumberList from './LumberList';
 import LumberTable from './LumberTable';
 import LumberForm from './LumberForm';

@@ -9,6 +9,7 @@ import Landing from '../pages/Landing';
 import SharedProject from '../pages/SharedProject';
 import TermsAndConditions from '../pages/TermsAndConditions';
 import { ConsumableTab, FinishTab, PrivateRoute, ProjectDetails, ProjectTab, SheetGoodTab, ToolTab } from '../components';
+import { CutListPage } from '../components/CutList';
 
 export const router = createBrowserRouter([
   {
@@ -70,6 +71,10 @@ export const router = createBrowserRouter([
       {
         path: 'projects/:id',
         element: <ProjectDetails />,
+      },
+      {
+        path: 'projects/:id/cutlist',
+        element: <CutListPage />,
       },
       {
         path: 'account',

@@ -14,7 +14,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';
-import { GET_SETTINGS, UPDATE_SETTINGS } from '../../graphql/operations';
+import { GET_SETTINGS, UPDATE_SETTINGS } from '../../graphql';
 import {
   CURRENCY_NAMES,
   LANGUAGE_NAMES,

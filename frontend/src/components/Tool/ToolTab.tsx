@@ -1,13 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation } from '@apollo/client';
 import { Box, CircularProgress, Typography } from '@mui/material';
-import {
-  GET_TOOLS,
-  CREATE_TOOL,
-  UPDATE_TOOL,
-  DELETE_TOOL,
-  RESTORE_TOOL,
-} from '../../graphql/operations';
+import { GET_TOOLS, CREATE_TOOL, UPDATE_TOOL, DELETE_TOOL, RESTORE_TOOL } from '../../graphql';
 import { ToolForm } from './ToolForm';
 import { ToolList } from './ToolList';
 import { ToolTable } from './ToolTable';

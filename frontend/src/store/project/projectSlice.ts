@@ -55,12 +55,7 @@ const projectSlice = createSlice({
   },
 });
 
-export const {
-  addProject,
-  updateProject,
-  softDeleteProject,
-  restoreProject,
-  hardDeleteProject,
-} = projectSlice.actions;
+export const { addProject, updateProject, softDeleteProject, restoreProject, hardDeleteProject } =
+  projectSlice.actions;
 
 export default projectSlice.reducer;

@@ -11,7 +11,8 @@ import {
   GET_SHEET_GOODS,
   UPDATE_PROJECT,
   GET_CONSUMABLES,
-} from '../../graphql/operations';
+  GET_CUT_LISTS,
+} from '../../graphql';
 import {
   calculateTotalBoardFootage,
   type CreateProjectInput,
@@ -68,6 +69,10 @@ export function ProjectDetails() {
   const { data: lumberData } = useQuery(GET_LUMBERS);
   const { data: sheetGoodsData } = useQuery(GET_SHEET_GOODS);
   const { data: consumablesData } = useQuery(GET_CONSUMABLES);
+  const { data: cutListsData } = useQuery(GET_CUT_LISTS, {
+    variables: { projectId: id || '' },
+    skip: !id,
+  });
 
   const activeFinishes = useMemo(() => {
     return (finishesData?.finishes || []).filter((finish: any) => !finish.isDeleted);
@@ -84,6 +89,13 @@ export function ProjectDetails() {
   const activeConsumables = useMemo(() => {
     return (consumablesData?.consumables || []).filter((consumable: any) => !consumable.isDeleted);
   }, [consumablesData]);
+
+  const cutListCompletion = useMemo(() => {
+    const cutLists = cutListsData?.cutLists || [];
+    if (cutLists.length === 0) return 0;
+    const completedCount = cutLists.filter((cut: any) => cut.isCompleted).length;
+    return Math.round((completedCount / cutLists.length) * 100);
+  }, [cutListsData]);
 
   if (loading) {
     return (
@@ -233,6 +245,10 @@ export function ProjectDetails() {
     }
   };
 
+  const handleCutList = () => {
+    navigate(`/app/projects/${project.id}/cutlist`);
+  };
+
   return (
     <Box
       sx={{
@@ -254,11 +270,13 @@ export function ProjectDetails() {
         projectDescription={project.description}
         projectStatus={project.status}
         copySuccess={copySuccess}
+        cutListCompletion={cutListCompletion}
         onBack={() => navigate('/app/projects')}
         onEdit={handleEdit}
         onDelete={handleDelete}
         onShare={handleShare}
         onStatusChange={handleStatusChange}
+        onCutList={handleCutList}
       />
 
       <ProjectSummary

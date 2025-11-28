@@ -12,7 +12,7 @@ import {
   GET_LUMBERS,
   GET_SHEET_GOODS,
   GET_CONSUMABLES,
-} from '../../graphql/operations';
+} from '../../graphql';
 import { ProjectList } from './ProjectList';
 import { ProjectTable } from './ProjectTable';
 import { ProjectForm } from './ProjectForm';
@@ -101,10 +101,26 @@ export function ProjectTab() {
       id: 'status',
       label: t('projects.filterBy.projectStatus'),
       options: [
-        { value: ProjectStatus.PLANNED, label: t('project.status.planned'), color: 'default' as const },
-        { value: ProjectStatus.IN_PROGRESS, label: t('project.status.inProgress'), color: 'info' as const },
-        { value: ProjectStatus.FINISHING, label: t('project.status.finishing'), color: 'warning' as const },
-        { value: ProjectStatus.COMPLETED, label: t('project.status.completed'), color: 'success' as const },
+        {
+          value: ProjectStatus.PLANNED,
+          label: t('project.status.planned'),
+          color: 'default' as const,
+        },
+        {
+          value: ProjectStatus.IN_PROGRESS,
+          label: t('project.status.inProgress'),
+          color: 'info' as const,
+        },
+        {
+          value: ProjectStatus.FINISHING,
+          label: t('project.status.finishing'),
+          color: 'warning' as const,
+        },
+        {
+          value: ProjectStatus.COMPLETED,
+          label: t('project.status.completed'),
+          color: 'success' as const,
+        },
       ],
     },
   ];

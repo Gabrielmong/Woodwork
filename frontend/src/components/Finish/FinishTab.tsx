@@ -7,7 +7,7 @@ import {
   UPDATE_FINISH,
   DELETE_FINISH,
   RESTORE_FINISH,
-} from '../../graphql/operations';
+} from '../../graphql';
 import type { CreateFinishInput, Finish } from '../../types';
 import { ConfirmDialog, ViewLayout } from '../General';
 import { FinishList } from './FinishList';

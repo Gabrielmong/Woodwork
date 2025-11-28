@@ -129,10 +129,12 @@ model Project {
   userId             String
   status             ProjectStatus       @default(PRICE)
   price              Float               @default(0)
+  measurementUnit    String              @default("inches")
   boards             Board[]
   projectConsumables ProjectConsumable[]
   projectFinishes    ProjectFinish[]
   projectSheetGoods  ProjectSheetGood[]
+  cutLists           CutList[]
   user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -223,6 +225,24 @@ model Tool {
   @@index([userId])
   @@index([isDeleted])
   @@map("tools")
+}
+
+model CutList {
+  id          String   @id @default(uuid())
+  width       Float
+  thickness   Float
+  length      Float
+  quantity    Int
+  description String?
+  isCompleted Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([isCompleted])
+  @@map("cut_lists")
 }
 
 model Settings {

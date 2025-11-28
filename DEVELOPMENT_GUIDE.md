@@ -260,7 +260,7 @@ export function createProjectFinish(input: CreateProjectFinishInput): ProjectFin
 ### 5. GraphQL Operations (Frontend)
 
 ```typescript
-// frontend/src/graphql/operations.ts
+// frontend/src/graphql.ts
 import { gql } from '@apollo/client';
 
 export const GET_NEW_FEATURES = gql`
@@ -326,7 +326,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField } from '@mui/material';
 import { useMutation } from '@apollo/client';
-import { CREATE_NEW_FEATURE, UPDATE_NEW_FEATURE, GET_NEW_FEATURES } from '../../graphql/operations';
+import { CREATE_NEW_FEATURE, UPDATE_NEW_FEATURE, GET_NEW_FEATURES } from '../../graphql';
 
 interface NewFeatureFormProps {
   open: boolean;
@@ -391,7 +391,7 @@ export function NewFeatureForm({ open, onClose, editingFeature }: NewFeatureForm
 }
 ```
 
-#### List Component
+#### List Component (MUI v7 Grid Syntax)
 ```typescript
 // frontend/src/components/NewFeature/NewFeatureList.tsx
 import { Grid, Card, CardContent, Typography, IconButton } from '@mui/material';
@@ -408,7 +408,8 @@ export function NewFeatureList({ features, onEdit, onDelete }: NewFeatureListPro
   return (
     <Grid container spacing={3}>
       {features.map((feature) => (
-        <Grid item xs={12} md={6} lg={4} key={feature.id}>
+        {/* MUI v7: Use 'size' prop instead of 'item' + xs/sm/md props */}
+        <Grid size={{ xs: 12, sm: 6, md: 4 }} key={feature.id}>
           <Card>
             <CardContent>
               <Typography variant="h6">{feature.name}</Typography>
@@ -428,6 +429,23 @@ export function NewFeatureList({ features, onEdit, onDelete }: NewFeatureListPro
     </Grid>
   );
 }
+```
+
+**MUI v7 Grid Changes:**
+```typescript
+// OLD (MUI v5/v6):
+<Grid container spacing={2}>
+  <Grid item xs={12} sm={6}>
+    {/* content */}
+  </Grid>
+</Grid>
+
+// NEW (MUI v7):
+<Grid container spacing={2}>
+  <Grid size={{ xs: 12, sm: 6 }}>
+    {/* content */}
+  </Grid>
+</Grid>
 ```
 
 ### 7. Add i18n Translations

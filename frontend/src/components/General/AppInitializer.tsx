@@ -3,7 +3,7 @@ import { useDispatch } from 'react-redux';
 import { useQuery } from '@apollo/client';
 import { loadUserFromStorage } from '../../store/authSlice';
 import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';
-import { GET_SETTINGS } from '../../graphql/operations';
+import { GET_SETTINGS } from '../../graphql';
 import { store } from '../../store/store';
 import type { Currency, Language, ThemeMode } from '../../types/settings';
 

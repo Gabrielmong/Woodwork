@@ -13,7 +13,8 @@
 - **GraphQL Client:** Apollo Client 3
 - **UI Framework:** Material-UI (MUI) v7
 - **Styling:** Emotion (CSS-in-JS)
-- **i18n:** i18next (English/Spanish support)
+- **Animation:** Framer Motion (for layout animations)
+- **i18n:** i18next (English/Spanish/Portuguese support)
 - **Routing:** React Router v7
 
 ### Backend
@@ -36,11 +37,22 @@
 - Create projects with multiple material types
 - Set project quote price (cotización)
 - Track project status (Planned, In Progress, Finishing, Completed)
+- Project-level measurement units (inches, centimeters, millimeters)
 - Calculate costs automatically based on materials used
 - Board feet calculations: `(width × thickness × length_in_inches) / 144 × quantity`
 - Finish percentage tracking (1-100% usage per finish)
 - Labor and miscellaneous costs
 - Shareable project links (public view)
+
+### 2.1 **Cut List Management**
+- Per-project cut lists with dimensions (width, thickness, length, quantity)
+- Checkbox system to mark cuts as complete
+- Real-time progress tracking (X/Y completed with percentage)
+- Filter views (All, Pending, Completed)
+- Automatic sorting (pending first, then by creation date)
+- Smooth animations when marking cuts complete (using Framer Motion)
+- Measurement unit display adapts to project setting
+- Description field for notes (e.g., "table legs", "drawer fronts")
 
 ### 3. **Cost Calculations**
 - **Material Cost:** Board feet × lumber cost per BF
@@ -92,10 +104,18 @@
 - Many-to-many with Projects via ProjectConsumable
 
 **Project**
-- Basic: name, description, status, price (quote), laborCost, miscCost, additionalNotes
-- Relations: boards[], projectFinishes[], projectSheetGoods[], projectConsumables[]
+- Basic: name, description, status, price (quote), measurementUnit, laborCost, miscCost, additionalNotes
+- Relations: boards[], projectFinishes[], projectSheetGoods[], projectConsumables[], cutLists[]
 - Computed fields: totalBoardFeet, materialCost, finishCost, sheetGoodsCost, consumableCost, totalCost
 - User ownership
+
+**CutList**
+- Dimensions: width, thickness, length, quantity
+- description (optional notes)
+- isCompleted (boolean for tracking progress)
+- References: Project (belongs to project)
+- Automatic sorting: pending first, then by creation date
+- Cascade delete: deleted when parent project is deleted
 
 **Board**
 - width, thickness, length (in varas), quantity
@@ -133,6 +153,7 @@ backend/
 │   │   ├── consumableResolvers.ts
 │   │   ├── toolResolvers.ts
 │   │   ├── projectResolvers.ts
+│   │   ├── cutListResolvers.ts
 │   │   ├── settingsResolvers.ts
 │   │   └── dashboardResolvers.ts
 │   ├── middleware/
@@ -182,7 +203,11 @@ frontend/
 │   │   │   ├── ConsumableList.tsx
 │   │   │   ├── ConsumableTable.tsx
 │   │   │   └── ConsumableInput.tsx
-│   │   └── Tool/
+│   │   ├── Tool/
+│   │   └── CutList/
+│   │       ├── CutListPage.tsx
+│   │       ├── CutListItem.tsx
+│   │       └── CutListModal.tsx
 │   ├── pages/
 │   │   ├── Dashboard.tsx
 │   │   ├── Landing.tsx
@@ -255,7 +280,29 @@ const finishCost = projectFinishes.reduce((total, projectFinish) => {
 
 ## Recent Major Features
 
-### 1. Project Price & Finish Percentage System (Latest - v1.12.0)
+### 1. Cut List Feature (Latest - v1.13.0)
+- **Per-Project Cut Lists:** Track individual cuts with dimensions (width, thickness, length, quantity)
+- **Progress Tracking:** Checkbox system with real-time progress display (X/Y completed, percentage)
+- **Filtering & Sorting:** Filter by All/Pending/Completed, automatic sorting (pending first)
+- **Measurement Units:** Project-level setting (inches/cm/mm) that applies to cut list display
+- **Smooth Animations:** Framer Motion integration for layout animations when marking cuts complete
+- **Delete Confirmation:** MUI Dialog for confirming cut deletions
+- **Translations:** Full EN/ES/PT translation support
+
+**Technical Implementation:**
+- Backend: New `CutList` model with cascade delete to projects
+- GraphQL: Full CRUD operations (queries, mutations, toggle complete)
+- Frontend: Three small components (CutListPage, CutListItem, CutListModal)
+- Animations: Framer Motion `layout` prop with `AnimatePresence` for smooth reordering
+- MUI v7: Updated Grid syntax using `size` prop instead of `item` prop
+- Route: `/app/projects/:id/cutlist`
+
+**Files Added/Modified:**
+- Backend: `schema.prisma`, `typeDefs.ts`, `cutListResolvers.ts`
+- Frontend: `CutList/` components, `types/cutList.ts`, GraphQL operations
+- i18n: Added 29 translation keys across EN/ES/PT
+
+### 2. Project Price & Finish Percentage System (v1.12.0)
 - **Project Quote Price:** Added `price` field to store quoted/estimated price for projects
 - **Finish Percentage Tracking:** Changed from simple many-to-many to explicit `ProjectFinish` join table
   - Track percentage usage (1-100%) for each finish in a project
@@ -270,19 +317,19 @@ const finishCost = projectFinishes.reduce((total, projectFinish) => {
 - Frontend: All project components updated (`ProjectForm`, `ProjectDetails`, `ProjectCard`, etc.)
 - Store: `projectLogic.ts` - Added `createProjectFinish()` helper
 
-### 2. Consumables Feature
+### 3. Consumables Feature
 - Added full consumables management (like glue, screws, sandpaper)
 - Package-based pricing with automatic unit price calculation
 - Integration across all project views (Details, List, Table, Form, Shared)
 - Cost calculation based on items used, not packages purchased
 
-### 3. Component Refactoring
+### 4. Component Refactoring
 - Broke down large components (936+ lines) into smaller modules
 - Improved maintainability with single-responsibility components
 - Created reusable components shared between views
 - **Line count reduction:** 67-89% across major components
 
-### 4. Full i18n Support
+### 5. Full i18n Support
 - Zero hardcoded strings in UI
 - 70+ translation keys added
 - Ready for multi-language support (English/Spanish)
@@ -395,6 +442,6 @@ VITE_API_URL="http://localhost:4000/graphql"
 ---
 
 **Last Updated:** January 2025
-**Project Version:** 1.12.0 (frontend) / 1.12.0 (backend)
+**Project Version:** 1.13.0 (frontend) / 1.13.0 (backend)
 **License:** Proprietary
 **Target Market:** Costa Rican woodworkers and craftspeople

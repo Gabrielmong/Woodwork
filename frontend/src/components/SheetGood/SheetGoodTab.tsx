@@ -7,7 +7,7 @@ import {
   UPDATE_SHEET_GOOD,
   DELETE_SHEET_GOOD,
   RESTORE_SHEET_GOOD,
-} from '../../graphql/operations';
+} from '../../graphql';
 import type { CreateSheetGoodInput, SheetGood } from '../../types';
 import { ConfirmDialog, ViewLayout } from '../General';
 import { SheetGoodList } from './SheetGoodList';

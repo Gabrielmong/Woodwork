@@ -58,6 +58,7 @@ export function ProjectForm({
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<ProjectStatus>(ProjectStatus.PRICE);
   const [price, setPrice] = useState('');
+  const [measurementUnit, setMeasurementUnit] = useState('inches');
   const [boards, setBoards] = useState<CreateBoardInput[]>([]);
   const [projectFinishes, setProjectFinishes] = useState<CreateProjectFinishInput[]>([]);
   const [projectSheetGoods, setProjectSheetGoods] = useState<CreateProjectSheetGoodInput[]>([]);
@@ -127,6 +128,7 @@ export function ProjectForm({
     setDescription('');
     setStatus(ProjectStatus.PRICE);
     setPrice('');
+    setMeasurementUnit('inches');
     setBoards([]);
     setProjectFinishes([]);
     setProjectSheetGoods([]);
@@ -142,6 +144,7 @@ export function ProjectForm({
       setDescription(editingProject.description);
       setStatus(editingProject.status);
       setPrice(editingProject.price.toString());
+      setMeasurementUnit(editingProject.measurementUnit || 'inches');
       const cleanBoards =
         editingProject.boards?.map((board) => ({
           width: board.width,
@@ -244,6 +247,7 @@ export function ProjectForm({
       description,
       status,
       price: parseFloat(price) || 0,
+      measurementUnit,
       boards,
       projectFinishes,
       projectSheetGoods,
@@ -326,10 +330,12 @@ export function ProjectForm({
             description={description}
             status={status}
             price={price}
+            measurementUnit={measurementUnit}
             onNameChange={setName}
             onDescriptionChange={setDescription}
             onStatusChange={setStatus}
             onPriceChange={setPrice}
+            onMeasurementUnitChange={setMeasurementUnit}
           />
 
           <ProjectBoardsFormSection

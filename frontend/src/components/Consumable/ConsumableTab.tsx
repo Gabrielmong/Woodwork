@@ -7,7 +7,7 @@ import {
   UPDATE_CONSUMABLE,
   DELETE_CONSUMABLE,
   RESTORE_CONSUMABLE,
-} from '../../graphql/operations';
+} from '../../graphql';
 import type { CreateConsumableInput, Consumable } from '../../types/consumable';
 import { ConfirmDialog, ViewLayout } from '../General';
 import { ConsumableList } from './ConsumableList';

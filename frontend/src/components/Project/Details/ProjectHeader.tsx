@@ -10,12 +10,14 @@ import {
   Select,
   MenuItem,
   Chip,
+  Badge,
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ShareIcon from '@mui/icons-material/Share';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import { ProjectStatus } from '../../../types/project';
 
 interface ProjectHeaderProps {
@@ -23,11 +25,13 @@ interface ProjectHeaderProps {
   projectDescription: string;
   projectStatus: ProjectStatus;
   copySuccess: boolean;
+  cutListCompletion: number;
   onBack: () => void;
   onEdit: () => void;
   onDelete: () => void;
   onShare: () => void;
   onStatusChange: (status: ProjectStatus) => void;
+  onCutList: () => void;
 }
 
 export function ProjectHeader({
@@ -35,11 +39,13 @@ export function ProjectHeader({
   projectDescription,
   projectStatus,
   copySuccess,
+  cutListCompletion,
   onBack,
   onEdit,
   onDelete,
   onShare,
   onStatusChange,
+  onCutList,
 }: ProjectHeaderProps) {
   const { t } = useTranslation();
 
@@ -130,6 +136,30 @@ export function ProjectHeader({
               </MenuItem>
             </Select>
           </FormControl>
+          <Badge
+            badgeContent={`${cutListCompletion}%`}
+            color={cutListCompletion === 100 ? 'success' : 'primary'}
+          >
+            <Button
+              onClick={onCutList}
+              startIcon={<ListAltIcon />}
+              sx={{
+                color: 'primary.main',
+                bgcolor: 'rgba(99, 91, 255, 0.08)',
+                px: 2,
+                py: 1,
+                borderRadius: 2,
+                textTransform: 'none',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                '&:hover': {
+                  bgcolor: 'rgba(99, 91, 255, 0.15)',
+                },
+              }}
+            >
+              {t('cutList.title')}
+            </Button>
+          </Badge>
           <IconButton
             onClick={onShare}
             sx={{

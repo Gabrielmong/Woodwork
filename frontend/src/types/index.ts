@@ -5,3 +5,4 @@ export * from './settings';
 export * from './tool';
 export * from './sheetGood';
 export * from './consumable';
+export * from './cutList';

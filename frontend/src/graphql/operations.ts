@@ -1,84 +1,5 @@
 import { gql } from '@apollo/client';
 
-// LUMBER OPERATIONS
-export const GET_LUMBERS = gql`
-  query GetLumbers($includeDeleted: Boolean) {
-    lumbers(includeDeleted: $includeDeleted) {
-      id
-      name
-      description
-      jankaRating
-      costPerBoardFoot
-      tags
-      isDeleted
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-export const GET_LUMBER = gql`
-  query GetLumber($id: ID!) {
-    lumber(id: $id) {
-      id
-      name
-      description
-      jankaRating
-      costPerBoardFoot
-      tags
-      isDeleted
-      createdAt
-      updatedAt
-    }
-  }
-`;
-
-export const CREATE_LUMBER = gql`
-  mutation CreateLumber($input: CreateLumberInput!) {
-    createLumber(input: $input) {
-      id
-      name
-      description
-      jankaRating
-      costPerBoardFoot
-      tags
-      createdAt
-    }
-  }
-`;
-
-export const UPDATE_LUMBER = gql`
-  mutation UpdateLumber($id: ID!, $input: UpdateLumberInput!) {
-    updateLumber(id: $id, input: $input) {
-      id
-      name
-      description
-      jankaRating
-      costPerBoardFoot
-      tags
-      updatedAt
-    }
-  }
-`;
-
-export const DELETE_LUMBER = gql`
-  mutation DeleteLumber($id: ID!) {
-    deleteLumber(id: $id) {
-      id
-      isDeleted
-    }
-  }
-`;
-
-export const RESTORE_LUMBER = gql`
-  mutation RestoreLumber($id: ID!) {
-    restoreLumber(id: $id) {
-      id
-      isDeleted
-    }
-  }
-`;
-
 // FINISH OPERATIONS
 export const GET_FINISHES = gql`
   query GetFinishes($includeDeleted: Boolean) {
@@ -436,6 +357,7 @@ export const GET_PROJECTS = gql`
       description
       status
       price
+      measurementUnit
       boards {
         id
         width
@@ -519,6 +441,7 @@ export const GET_PROJECT = gql`
       description
       status
       price
+      measurementUnit
       boards {
         id
         width
@@ -603,6 +526,7 @@ export const GET_SHARED_PROJECT = gql`
       description
       status
       price
+      measurementUnit
       boards {
         id
         width
@@ -766,6 +690,86 @@ export const GET_DASHBOARD_STATS = gql`
       totalProfit
       avgCostPerBF
       totalToolsValue
+    }
+  }
+`;
+
+// CUTLIST OPERATIONS
+export const GET_CUT_LISTS = gql`
+  query GetCutLists($projectId: ID!) {
+    cutLists(projectId: $projectId) {
+      id
+      width
+      thickness
+      length
+      quantity
+      description
+      isCompleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_CUT_LIST = gql`
+  query GetCutList($id: ID!) {
+    cutList(id: $id) {
+      id
+      width
+      thickness
+      length
+      quantity
+      description
+      isCompleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const CREATE_CUT_LIST = gql`
+  mutation CreateCutList($input: CreateCutListInput!) {
+    createCutList(input: $input) {
+      id
+      width
+      thickness
+      length
+      quantity
+      description
+      isCompleted
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const UPDATE_CUT_LIST = gql`
+  mutation UpdateCutList($id: ID!, $input: UpdateCutListInput!) {
+    updateCutList(id: $id, input: $input) {
+      id
+      width
+      thickness
+      length
+      quantity
+      description
+      isCompleted
+      updatedAt
+    }
+  }
+`;
+
+export const DELETE_CUT_LIST = gql`
+  mutation DeleteCutList($id: ID!) {
+    deleteCutList(id: $id)
+  }
+`;
+
+export const TOGGLE_CUT_LIST_COMPLETE = gql`
+  mutation ToggleCutListComplete($id: ID!) {
+    toggleCutListComplete(id: $id) {
+      id
+      isCompleted
+      updatedAt
     }
   }
 `;

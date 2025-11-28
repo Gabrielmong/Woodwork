@@ -152,6 +152,19 @@ export const typeDefs = gql`
     updatedAt: DateTime!
   }
 
+  # CutList Type
+  type CutList {
+    id: ID!
+    width: Float!
+    thickness: Float!
+    length: Float!
+    quantity: Int!
+    description: String
+    isCompleted: Boolean!
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
   # Project Type
   type Project {
     id: ID!
@@ -159,10 +172,12 @@ export const typeDefs = gql`
     description: String!
     status: ProjectStatus!
     price: Float!
+    measurementUnit: String!
     boards: [Board!]!
     projectFinishes: [ProjectFinish!]!
     projectSheetGoods: [ProjectSheetGood!]!
     projectConsumables: [ProjectConsumable!]!
+    cutLists: [CutList!]!
     sheetGoodsCost: Float!
     consumableCost: Float!
     laborCost: Float!
@@ -184,6 +199,7 @@ export const typeDefs = gql`
     description: String!
     status: ProjectStatus!
     price: Float!
+    measurementUnit: String!
     boards: [Board!]!
     projectFinishes: [ProjectFinish!]!
     projectSheetGoods: [ProjectSheetGood!]!
@@ -355,12 +371,32 @@ export const typeDefs = gql`
     percentageUsed: Float!
   }
 
+  # Input Types for CutList
+  input CreateCutListInput {
+    projectId: String!
+    width: Float!
+    thickness: Float!
+    length: Float!
+    quantity: Int!
+    description: String
+  }
+
+  input UpdateCutListInput {
+    width: Float
+    thickness: Float
+    length: Float
+    quantity: Int
+    description: String
+    isCompleted: Boolean
+  }
+
   # Input Types for Project
   input CreateProjectInput {
     name: String!
     description: String!
     status: ProjectStatus
     price: Float!
+    measurementUnit: String
     boards: [BoardInput!]
     projectFinishes: [ProjectFinishInput!]
     projectSheetGoods: [ProjectSheetGoodInput!]
@@ -375,6 +411,7 @@ export const typeDefs = gql`
     description: String
     status: ProjectStatus
     price: Float
+    measurementUnit: String
     boards: [BoardInput!]
     projectFinishes: [ProjectFinishInput!]
     projectSheetGoods: [ProjectSheetGoodInput!]
@@ -458,6 +495,10 @@ export const typeDefs = gql`
     projects(includeDeleted: Boolean): [Project!]!
     project(id: ID!): Project
 
+    # CutList Queries (Private)
+    cutLists(projectId: ID!): [CutList!]!
+    cutList(id: ID!): CutList
+
     # Settings Query (Private)
     settings: Settings!
 
@@ -518,6 +559,12 @@ export const typeDefs = gql`
     deleteProject(id: ID!): Project!
     restoreProject(id: ID!): Project!
     hardDeleteProject(id: ID!): Boolean!
+
+    # CutList Mutations (Private)
+    createCutList(input: CreateCutListInput!): CutList!
+    updateCutList(id: ID!, input: UpdateCutListInput!): CutList!
+    deleteCutList(id: ID!): Boolean!
+    toggleCutListComplete(id: ID!): CutList!
 
     # Settings Mutations (Private)
     updateSettings(input: UpdateSettingsInput!): Settings!

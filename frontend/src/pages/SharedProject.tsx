@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@apollo/client';
 import { Box, Container, CircularProgress, Alert, Divider, Paper, Typography } from '@mui/material';
-import { GET_SHARED_PROJECT } from '../graphql/operations';
+import { GET_SHARED_PROJECT } from '../graphql';
 import type { SharedProject } from '../types/project';
 import { CURRENCY_SYMBOLS } from '../types';
 import { calculateTotalBoardFootage } from '../types/project';

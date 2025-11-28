@@ -1,9 +1,11 @@
 # Implementation Guide
 
 ## Overview
+
 This guide covers the major features and implementation patterns in the Lumber Calculator application.
 
 ## Table of Contents
+
 1. [Project Price & Finish Percentage System](#project-price--finish-percentage-system)
 2. [Currency & Language Settings](#currency--language-settings)
 3. [Cost Calculations](#cost-calculations)
@@ -21,13 +23,9 @@ import { useCurrency } from '../utils/currency';
 export default function MyComponent() {
   const formatCurrency = useCurrency();
 
-  const price = 1250.50;
+  const price = 1250.5;
 
-  return (
-    <Typography>
-      Price: {formatCurrency(price)}
-    </Typography>
-  );
+  return <Typography>Price: {formatCurrency(price)}</Typography>;
 }
 ```
 
@@ -36,17 +34,20 @@ export default function MyComponent() {
 Replace all hardcoded `₡` symbols with the currency hook:
 
 **Lumber Components:**
+
 - `LumberList.tsx` - Line 106 (costPerBoardFoot display)
 - `LumberTable.tsx` - Line 64 (costPerBoardFoot cell)
 - `LumberForm.tsx` - Label "Cost per Board Foot (₡)" → use translation
 - `BoardInput.tsx` - Lines 87, 161 (lumber dropdown and cost display)
 
 **Finish Components:**
+
 - `FinishList.tsx` - Line 103 (price display)
 - `FinishTable.tsx` - Line 74 (price cell)
 - `FinishForm.tsx` - Label "Price (₡)" → use translation, Line 255 (finish dropdown)
 
 **Project Components:**
+
 - `ProjectList.tsx` - Lines 181, 190, 200, 210, 228 (all cost displays)
 - `ProjectTable.tsx` - Line 137 (totalCost cell)
 - `ProjectForm.tsx` - Lines 271, 279 (labor and misc cost labels)
@@ -54,17 +55,19 @@ Replace all hardcoded `₡` symbols with the currency hook:
 ### Example Implementation
 
 **Before:**
+
 ```tsx
 <Typography>₡{item.price.toFixed(2)}</Typography>
 ```
 
 **After:**
+
 ```tsx
 import { useCurrency } from '../utils/currency';
 
 const formatCurrency = useCurrency();
 
-<Typography>{formatCurrency(item.price)}</Typography>
+<Typography>{formatCurrency(item.price)}</Typography>;
 ```
 
 ## Translation Implementation
@@ -79,11 +82,7 @@ import { useTranslation } from 'react-i18next';
 export default function MyComponent() {
   const { t } = useTranslation();
 
-  return (
-    <Typography variant="h3">
-      {t('lumber.title')}
-    </Typography>
-  );
+  return <Typography variant="h3">{t('lumber.title')}</Typography>;
 }
 ```
 
@@ -102,6 +101,7 @@ See `src/i18n/en.json` and `src/i18n/es.json` for all available keys:
 ### Components That Need Translation Updates
 
 **ViewLayout.tsx:**
+
 ```tsx
 // Add at top
 import { useTranslation } from 'react-i18next';
@@ -113,6 +113,7 @@ const { t } = useTranslation();
 ```
 
 **LumberTab.tsx:**
+
 ```tsx
 <ViewLayout
   title={t('lumber.title')}
@@ -150,6 +151,7 @@ Already implemented - reference example for other components.
 ## Status
 
 ✅ **Completed:**
+
 - Currency hook (`useCurrency`)
 - i18next setup
 - Translation files (EN/ES)
@@ -158,6 +160,7 @@ Already implemented - reference example for other components.
 - Settings page fully translated
 
 ✅ **Completed:**
+
 - All components updated to use `useCurrency()` hook
 - All components updated to use `t()` translation function
 - All pages tested in both languages and currencies
@@ -167,13 +170,16 @@ Already implemented - reference example for other components.
 ## Project Price & Finish Percentage System
 
 ### Overview
+
 Projects now support:
+
 1. **Price Field** - Store quoted price (cotización) for projects
 2. **Finish Percentage** - Track partial usage of finish products (1-100%)
 
 ### Database Schema
 
 #### Project Model Changes
+
 ```prisma
 model Project {
   id              String   @id @default(uuid())
@@ -184,6 +190,7 @@ model Project {
 ```
 
 #### New ProjectFinish Join Table
+
 ```prisma
 model ProjectFinish {
   id             String   @id @default(uuid())
@@ -264,16 +271,18 @@ export interface Project {
 ### Cost Calculation Pattern
 
 All finish cost calculations use this formula:
+
 ```typescript
 const finishCost = projectFinishes.reduce((total, projectFinish) => {
   const finish = projectFinish.finish;
   if (!finish) return total;
   const percentageDecimal = projectFinish.percentageUsed / 100;
-  return total + (finish.price * percentageDecimal);
+  return total + finish.price * percentageDecimal;
 }, 0);
 ```
 
 **Key Files Using This Pattern:**
+
 - `frontend/src/components/Project/ProjectDetails.tsx` (line 130-135)
 - `frontend/src/components/Project/List/ProjectCard.tsx` (line 46-51)
 - `frontend/src/components/Project/ProjectTable.tsx` (line 68-72)
@@ -283,6 +292,7 @@ const finishCost = projectFinishes.reduce((total, projectFinish) => {
 ### UI Components
 
 #### ProjectFinishesFormSection.tsx
+
 Creates/edits project finishes with percentage controls:
 
 ```tsx
@@ -299,10 +309,7 @@ Creates/edits project finishes with percentage controls:
     onChange={(e) => handleFinishChange(index, e.target.value)}
   >
     {finishOptions.map((finish) => (
-      <MenuItem
-        value={finish.id}
-        disabled={isFinishDisabled(finish.id, index)}
-      >
+      <MenuItem value={finish.id} disabled={isFinishDisabled(finish.id, index)}>
         {finish.name}
       </MenuItem>
     ))}
@@ -323,6 +330,7 @@ Creates/edits project finishes with percentage controls:
 ```
 
 #### ProjectFinishesSection.tsx
+
 Displays finishes in project details:
 
 ```tsx
@@ -382,11 +390,13 @@ Displays finishes in project details:
 **Breaking Change:** The Project-Finish relationship changed from implicit to explicit.
 
 **Migration Path:**
+
 1. Data was migrated from `_ProjectFinishes` table to `project_finishes`
 2. All existing project-finish associations received `percentageUsed = 100`
 3. All components updated to use `project.projectFinishes` instead of `project.finishes`
 
 **Files That Required Updates:**
+
 - `ProjectForm.tsx` - Changed from `finishIds` to `projectFinishes` array
 - `ProjectDetails.tsx` - Updated to use `projectFinishes`
 - `ProjectCard.tsx` - Updated cost calculation
@@ -408,7 +418,7 @@ export function createProjectFinish(input: CreateProjectFinishInput): ProjectFin
 }
 
 // Used in createProject and updateProjectItem:
-projectFinishes: input.projectFinishes?.map(createProjectFinish) || []
+projectFinishes: input.projectFinishes?.map(createProjectFinish) || [];
 ```
 
 ---
@@ -419,12 +429,12 @@ projectFinishes: input.projectFinishes?.map(createProjectFinish) || []
 
 ```typescript
 totalCost =
-  materialCost +      // Boards (lumber × board feet)
-  finishCost +        // Finishes (price × percentage / 100)
-  sheetGoodCost +     // Sheet goods (price × quantity)
-  consumableCost +    // Consumables (unitPrice × quantity)
-  laborCost +         // Manual entry
-  miscCost            // Manual entry
+  materialCost + // Boards (lumber × board feet)
+  finishCost + // Finishes (price × percentage / 100)
+  sheetGoodCost + // Sheet goods (price × quantity)
+  consumableCost + // Consumables (unitPrice × quantity)
+  laborCost + // Manual entry
+  miscCost; // Manual entry
 ```
 
 ### Material Cost (Boards)
@@ -441,7 +451,7 @@ const materialCost = boards.reduce((total, board) => {
   const boardFeet = (board.width * board.thickness * lengthInInches) / 144;
   const totalBF = boardFeet * board.quantity;
 
-  return total + (totalBF * lumber.costPerBoardFoot);
+  return total + totalBF * lumber.costPerBoardFoot;
 }, 0);
 ```
 
@@ -453,7 +463,7 @@ const finishCost = projectFinishes.reduce((total, projectFinish) => {
   if (!finish) return total;
 
   const percentageDecimal = projectFinish.percentageUsed / 100;
-  return total + (finish.price * percentageDecimal);
+  return total + finish.price * percentageDecimal;
 }, 0);
 ```
 
@@ -472,7 +482,7 @@ const consumableCost = projectConsumables.reduce((total, projectConsumable) => {
   const consumable = projectConsumable.consumable;
   if (!consumable) return total;
 
-  return total + (projectConsumable.quantity * consumable.unitPrice);
+  return total + projectConsumable.quantity * consumable.unitPrice;
 }, 0);
 ```
 
@@ -492,12 +502,8 @@ export function MyComponent() {
 
   return (
     <Box>
-      <Typography variant="h6">
-        {t('myComponent.title')}
-      </Typography>
-      <Typography>
-        {formatCurrency(price)}
-      </Typography>
+      <Typography variant="h6">{t('myComponent.title')}</Typography>
+      <Typography>{formatCurrency(price)}</Typography>
     </Box>
   );
 }
@@ -515,14 +521,14 @@ const [value, setValue] = useState('');
   onChange={(e) => setValue(e.target.value)}
   helperText={t('form.helper')}
   type="number"
-/>
+/>;
 ```
 
 ### GraphQL Query Pattern
 
 ```tsx
 import { useQuery } from '@apollo/client';
-import { GET_PROJECTS } from '../graphql/operations';
+import { GET_PROJECTS } from '../graphql';
 
 const { data, loading, error } = useQuery(GET_PROJECTS);
 
@@ -536,7 +542,7 @@ const projects = data?.projects || [];
 
 ```tsx
 import { useMutation } from '@apollo/client';
-import { CREATE_PROJECT } from '../graphql/operations';
+import { CREATE_PROJECT } from '../graphql';
 
 const [createProject] = useMutation(CREATE_PROJECT, {
   refetchQueries: [{ query: GET_PROJECTS }],
@@ -550,7 +556,7 @@ const [createProject] = useMutation(CREATE_PROJECT, {
 
 const handleSubmit = async () => {
   await createProject({
-    variables: { input: projectData }
+    variables: { input: projectData },
   });
 };
 ```

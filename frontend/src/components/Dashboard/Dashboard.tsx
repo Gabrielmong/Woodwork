@@ -19,7 +19,7 @@ import BuildIcon from '@mui/icons-material/Build';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import { GET_DASHBOARD_STATS, GET_SETTINGS } from '../../graphql/operations';
+import { GET_DASHBOARD_STATS, GET_SETTINGS } from '../../graphql';
 import { useCurrency } from '../../utils/currency';
 import { useDispatch } from 'react-redux';
 import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';

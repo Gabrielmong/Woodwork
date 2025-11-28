@@ -27,7 +27,7 @@ import { useQuery, useMutation } from '@apollo/client';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setCurrency, setLanguage, setThemeMode } from '../../store/settings/settingsSlice';
 import { updateUser } from '../../store/authSlice';
-import { GET_SETTINGS, UPDATE_SETTINGS } from '../../graphql/operations';
+import { GET_SETTINGS, UPDATE_SETTINGS } from '../../graphql';
 import { GET_ME, UPDATE_USER, CHANGE_PASSWORD } from '../../graphql/auth';
 import {
   CURRENCY_NAMES,
@@ -354,7 +354,9 @@ export default function Account() {
                   {t('account.dateOfBirth')}
                 </Typography>
                 <Typography variant="body1">
-                  {user?.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : t('common.notSet')}
+                  {user?.dateOfBirth
+                    ? new Date(user.dateOfBirth).toLocaleDateString()
+                    : t('common.notSet')}
                 </Typography>
               </Box>
 
@@ -367,7 +369,9 @@ export default function Account() {
                   {t('account.memberSince')}
                 </Typography>
                 <Typography variant="body1">
-                  {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : t('common.unknown')}
+                  {user?.createdAt
+                    ? new Date(user.createdAt).toLocaleDateString()
+                    : t('common.unknown')}
                 </Typography>
               </Box>
 

@@ -53,6 +53,7 @@ export function createProject(input: CreateProjectInput): Project {
     description: input.description,
     status: input.status || ProjectStatus.PLANNED,
     price: input.price || 0,
+    measurementUnit: input.measurementUnit || 'inches',
     boards: input?.boards?.map(createBoard),
     projectFinishes: input.projectFinishes?.map(createProjectFinish) || [],
     projectSheetGoods: input.projectSheetGoods?.map(createProjectSheetGood) || [],
